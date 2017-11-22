@@ -1,0 +1,10 @@
+# Python files:
+*.bak
+__pycache__/
+
+# emacs files:
+*~
+*#
+
+# output directory:
+outputs/

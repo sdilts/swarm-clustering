@@ -1,13 +1,6 @@
 import Analyze
 import score_funcs
-import kNN
-
 import KMeans
-
-def main():
-    score_list = [score_funcs.score_1, score_funcs.score_2]
-    dataset = [(1,1), (2,2), (10,10), (11,11)]
-    Analyze.analyze(dataset, "test", 10, build_kMeans_func(2), score_list)
 
 
 
@@ -27,4 +20,7 @@ def build_kMeans_func(k):
     run_function.alg_name = "K-Means"
     return run_function
 
-main()
+if __name__ == '__main__':
+    score_list = [score_funcs.score_1, score_funcs.score_2]
+    dataset = [(1,1), (2,2), (10,10), (11,11)]
+    Analyze.analyze(dataset, "test", 10, build_kMeans_func(2), score_list)

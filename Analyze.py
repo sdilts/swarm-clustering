@@ -1,5 +1,6 @@
 # This file defines two functions for analyzing the output of the clustering functions.
 import os, getpass, errno
+import pandas as pd
 import time
 
 def _create_output_folder(dataset_name, alg_name):
@@ -34,20 +35,32 @@ def _create_output_folder(dataset_name, alg_name):
                 raise
     return output_dir
 
-def _save_run_info(save_loc, alg_func, dataset):
-    with open(os.path.join(save_loc, "func_info.txt"), 'w') as file:
+def _save_run_info(save_loc, alg_func, score_funcs, dataset):
+    """Extracts the metadata from the given parameters and saves them to a file
+    called "run_info.txt"
+    """
+    with open(os.path.join(save_loc, "run_info.txt"), 'w') as file:
         file.write("Alg Name: " + alg_func.alg_name + "\n")
         file.write("Dataset: " + dataset + "\n")
-        file.write("Params:\n")
+        file.write("Scoring functions:")
+        for func in score_funcs:
+            file.write(" " + func.name)
+        file.write("\nParams:\n")
         for key in alg_func.params:
             file.write("\t" + key + ": " + str(alg_func.params[key]))
         file.write("\n")
 
-
+def _compute_statistics(data_frame):
+    stats = dict()
+    stats["stdev"] = data_frame.std()
+    stats["mean"] = data_frame.mean()
+    stats["max"] = data_frame.max()
+    stats["min"] = data_frame.min()
+    return pd.DataFrame(stats)
 
 def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
     save_loc = _create_output_folder(dataset_name, alg_func.alg_name)
-    _save_run_info(save_loc, alg_func, dataset_name)
+    _save_run_info(save_loc, alg_func, score_funcs, dataset_name)
     iteration_results = []
     final_states = []
 
@@ -57,11 +70,26 @@ def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
         final_states.append(results[-1])
         iteration_results.append(results)
 
-
+    #convert all of our final vaules into pandas dataframes:
+    final_table = pd.DataFrame(final_states)
     # do some anaylisis on the data:
+    stats = _compute_statistics(final_table)
+    # save the file as the summary:
+    print("Saving final data...")
+    stats.to_csv(os.path.join(save_loc, "final_stats.csv"), index=True, header=True)
+    final_table.to_csv(os.path.join(save_loc, "final_data.csv"), header=True)
+    print("Done.")
+    # only do the iteration data if it is different than that final data:
+    if len(iteration_results[0]) > 0:
+        print("Saving iteration data..")
+        #convert all iteration data into pandas dataframes:
+        iteration_tables = [pd.DataFrame(results) for results in iteration_results]
+        for i, tbl in enumerate(iteration_tables):
+            tbl.to_csv(os.path.join(save_loc, "iteration" + str(i) + "_data.csv"), header=True)
+        print("Done")
+    else:
+        print("Iteration data same as final data. Not saving.")
 
-
-    # save the stuff into a file...
 
 def analyze_clusters(clusters, score_funcs):
     """Analyzes the cluster based on the score functions given.

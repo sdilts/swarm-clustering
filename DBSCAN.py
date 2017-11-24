@@ -26,9 +26,8 @@ def core_point(index, all_points, radius, minpts):
 
     if point_count >= minpts:
         return current_point, neighborhood
-    else:
-        return None
 
+    return None
 
 def dbscan(data_points, radius, minpts):
     # Calculate which pts are core using multiple processes for speed
@@ -36,57 +35,39 @@ def dbscan(data_points, radius, minpts):
     pool = mp.Pool(processes=4)
     results = [pool.apply_async(core_point, args=(x, data_points, radius, minpts)) for x in range(len(data_points))]
     core_pts = [p.get() for p in results]
+    t1 = time.time()
+    print("Pool Time %s: " % (t1-t0))
 
-    # Add core pts to a set for fast membership check
-    core_set = set()
+    # Add core pts to a dictionary for fast membership check
+    core_set = {}
     for pt in core_pts:
         if pt is not None:
-            core_set.add(pt[0])
+            core_set[pt[0]] = pt[1]
 
-    # print("Test Set")
-    # print(core_set)
-    t1=time.time()
-    print("Pool Time %s" % (t1-t0))
-    #print(core_pts[0][1])
-    #print()
-
-    # t0 = time.time()
-    # core_pts = []
-    # for i in range(len(data_points)):
-    #     is_core = core_point(i, data_points, radius, minpts)
-    #     core_pts.append(is_core)
-    #
-    # t1 = time.time()
-    # print("Sequential Time %s" % (t1-t0))
-    # print(core)
-
+    # Each pt receives a label assigning it to a cluster or noise
     cluster_label = {}
     for pt in data_points:
         cluster_label[pt] = "unknown"
 
     # Assign pts to cluster
-    # cluster_colors = {}
-    # colors = ['r', 'b', 'g', 'c', 'y', 'k']
     label_num = 0
-    for pt in core_pts:
-        if pt is not None:
-            if cluster_label[pt[0]] == "unknown":
-                label_num += 1
-                # c = colors.pop(0)
-                # cluster_colors[label_num] = c
-                # colors.append(c)
-                cluster_label[pt[0]] = label_num
+    for core_pt, neighbor in core_set.items():
+        if cluster_label[core_pt] == "unknown":
+            label_num += 1
+            cluster_label[core_pt] = label_num
+            queue = deque()
+            queue.append(core_pt)
 
-            queue = deque(pt)
-            while len(queue) > 0:
-                current_point = queue.popleft()
-                for neighbor in current_point[1]:
-                    if neighbor in core_set:
-                        queue.append()
-                    if cluster_label[neighbor] == "unknown":
-                        cluster_label[neighbor] = label_num
+        while len(queue) > 0:
+            current_point = queue.popleft()
 
-    return cluster_label # , cluster_colors
+            for n in core_set[current_point]:
+                if n in core_set and cluster_label[n] == "unknown":
+                    queue.append(n)
+                if cluster_label[n] == "unknown":
+                    cluster_label[n] = label_num
+
+    return cluster_label
 
 
 def parameter_selection(k, data_pts):
@@ -118,10 +99,9 @@ def load_data(file_name):
 
 
 def cluster(data_pts, radius, minpts):
-    result = dbscan(data_pts, radius, minpts)
-    labels = result[0]
-    colors = result[1]
-    print(colors)
+    labels = dbscan(data_pts, radius, minpts)
+    cluster_color = {}
+    c = ['r', 'b', 'g', 'y', 'c', 'b']
     x = []
     y = []
     color = []
@@ -129,7 +109,13 @@ def cluster(data_pts, radius, minpts):
         if cluster is not "unknown":
             x.append(key[0])
             y.append(key[1])
-            color.append(colors[cluster])
 
-    plt.scatter(x,y,c=color)
+            if cluster not in cluster_color:
+                cur = c.pop(0)
+                cluster_color[cluster] = cur
+                c.append(cur)
+
+            color.append(cluster_color[cluster])
+
+    plt.scatter(x, y, c=color)
     plt.show()

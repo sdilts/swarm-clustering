@@ -1,11 +1,11 @@
 import multiprocessing as mp
 import numpy as np
 from collections import deque
-import copy
 import time
 import random
 import matplotlib.pyplot as plt
 
+'''This module contains the functionality for the DBSCAN clustering algorithm.'''
 
 # Test if point satisfies core point requirements
 def core_point(index, all_points, radius, minpts):
@@ -24,10 +24,12 @@ def core_point(index, all_points, radius, minpts):
             point_count += 1
             neighborhood.append(all_points[i])
 
+    # Return the core point, along with the points in its neighborhood
     if point_count >= minpts:
         return current_point, neighborhood
 
     return None
+
 
 def dbscan(data_points, radius, minpts):
     # Calculate which pts are core using multiple processes for speed
@@ -61,7 +63,9 @@ def dbscan(data_points, radius, minpts):
         while len(queue) > 0:
             current_point = queue.popleft()
 
+            # Add core point neighbors to the current cluster
             for n in core_set[current_point]:
+                # If one of the neighbor points is also a core point, add it to the queue
                 if n in core_set and cluster_label[n] == "unknown":
                     queue.append(n)
                 if cluster_label[n] == "unknown":
@@ -70,6 +74,7 @@ def dbscan(data_points, radius, minpts):
     return cluster_label
 
 
+# Method to determine a reasonable radius to use
 def parameter_selection(k, data_pts):
     k_dist = []
     for pt in data_pts:
@@ -87,6 +92,7 @@ def parameter_selection(k, data_pts):
     plt.show()
 
 
+# Load data from a local file
 def load_data(file_name):
     cluster = []
     with open(file_name, 'r') as file:
@@ -98,6 +104,7 @@ def load_data(file_name):
     return cluster
 
 
+# Plot the clusters
 def cluster(data_pts, radius, minpts):
     labels = dbscan(data_pts, radius, minpts)
     cluster_color = {}

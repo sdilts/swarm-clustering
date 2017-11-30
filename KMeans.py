@@ -1,7 +1,7 @@
 import random
 import numpy as np
-
 import Analyze
+
 
 def _weighted_choice(weights):
     rnd = random.random() * sum(weights)
@@ -11,10 +11,12 @@ def _weighted_choice(weights):
         if rnd < 0:
             return i
 
+
 def _calc_distance(vector1, vector2):
     """Return the distance of ||vector1 - vector2||
     """
     return np.linalg.norm(np.subtract(vector1, vector2))
+
 
 def _calc_weight(centroids, data_point):
     min_dist = float("inf")
@@ -23,7 +25,6 @@ def _calc_weight(centroids, data_point):
         if dist < min_dist:
             min_dist = dist
     return min_dist * min_dist
-
 
 
 def _initializeCentroids(k, data_set):
@@ -39,16 +40,19 @@ def _initializeCentroids(k, data_set):
         centroids.append(data_set[_weighted_choice(weights)])
     return centroids
 
+
 def _hasConverged(old_centroids, new_centroids):
     for i in range(len(new_centroids)):
         if np.all(new_centroids[i] != old_centroids[i]):
             return False
     return True
 
+
 def _group_points(dataset, centroids):
-    clusterVectors = []
-    for j in range(len(centroids)):
-        clusterVectors.append([])
+    clusterVectors = {}
+    # for j in range(len(centroids)):
+    #     clusterVectors.append([])
+
     for vector in dataset:
         min_dist = float("inf")
         cluster = -1
@@ -59,6 +63,7 @@ def _group_points(dataset, centroids):
                 cluster = i
         clusterVectors[cluster].append(vector)
     return clusterVectors
+
 
 def _findMeanVectors(cluster_list, data_set):
     """Find the mean vectors for each cluster, then return  that vector
@@ -71,6 +76,7 @@ def _findMeanVectors(cluster_list, data_set):
             mean = np.mean(cluster, axis=0)
             mean_vectors.append(mean)
     return mean_vectors
+
 
 def kMeans(data_set, score_funcs, k):
     assert(k <= len(data_set))

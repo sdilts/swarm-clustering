@@ -98,9 +98,9 @@ def _calculate_centroids(clusters):
 	
 	centroids = []
 
-	for cluster in clusters:
+	for label, data in clusters.items():
 
-		centroid = np.mean(cluster, axis=0)
+		centroid = np.mean(data, axis=0)
 		centroids.append(centroid)
 
 	return centroids

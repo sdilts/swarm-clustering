@@ -40,3 +40,14 @@ class Layer:
 		weight_scaler = Normalizer().fit(self.weights[cluster_number].reshape(1, -1))
 		normalized_weights = weight_scaler.transform(self.weights[cluster_number].reshape(1, -1))
 		self.weights[cluster_number] = normalized_weights[0]
+
+	def randomize_weights(self, cluster_number, num_inputs):
+		''' Given a cluster number, randomize the weights for the
+			corresponding node '''
+
+		new_weights = np.random.uniform(-0.2, 0.2, size=num_inputs) # Randomize the weights
+
+		#Normalize the weights
+		scaler = Normalizer().fit(new_weights.reshape(1, -1))
+		normalized_weights = scaler.transform(new_weights.reshape(1, -1))
+		self.weights[cluster_number] = normalized_weights[0]		

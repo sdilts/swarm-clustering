@@ -1,11 +1,13 @@
 import multiprocessing as mp
 import numpy as np
 from collections import deque
+from collections import defaultdict
 import time
 import random
 import matplotlib.pyplot as plt
 
 '''This module contains the functionality for the DBSCAN clustering algorithm.'''
+
 
 # Test if point satisfies core point requirements
 def core_point(index, all_points, radius, minpts):
@@ -107,6 +109,11 @@ def load_data(file_name):
 # Plot the clusters
 def cluster(data_pts, radius, minpts):
     labels = dbscan(data_pts, radius, minpts)
+
+    clusters = defaultdict(list)
+    for key, label in labels.items():
+        clusters[label].append(key)
+
     cluster_color = {}
     c = ['r', 'b', 'g', 'y', 'c', 'b']
     x = []
@@ -126,3 +133,5 @@ def cluster(data_pts, radius, minpts):
 
     plt.scatter(x, y, c=color)
     plt.show()
+
+    return clusters

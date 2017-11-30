@@ -1,5 +1,6 @@
 import numpy as np
 import Layer
+import collections
 
 '''This module contains the functionality for the competitive learning clustering algorithm.'''
 
@@ -13,18 +14,27 @@ def competitive_learning(data_set, eta, num_clusters, iterations):
 
 	for iteration in range(iterations):
 
-		weight_layer = _train_network(data_set, weight_layer)
+		weight_layer = _train_network(data_set, weight_layer, num_clusters)
 
-	_cluster(data_set, weight_layer)
+	clustering = _cluster(data_set, weight_layer)
+	return clustering
 
-def _train_network(data_set, weight_layer):
+def _train_network(data_set, weight_layer, num_clusters):
 	''' Given the data set and the current network weights, run one iteration
 		of weight updates for each example in the data set '''
+
+	winners_seen = []
 
 	for data_point in data_set:
 
 		winner_node = _select_cluster(data_point, weight_layer.weights)
 		weight_layer.update_weights(winner_node, data_point)
+		winners_seen.append(winner_node)
+
+	#If a cluster hasn't been selected, randomize it's weights before the next round
+	for i in range(num_clusters):
+		if i not in winners_seen:
+			weight_layer.randomize_weights(i, len(weight_layer.weights[i]))
 
 	return weight_layer
 
@@ -46,13 +56,21 @@ def _select_cluster(data_point, weights):
 
 def _cluster (data_set, weight_layer):
 
+	clustering = collections.defaultdict(list)
+
 	for d in data_set: 
 		cluster = _select_cluster(d, weight_layer.weights)
-		print (d)
-		print (cluster)
+		clustering[cluster].append(d)
+
+	return clustering
 
 
 if __name__ == '__main__':
 	
 	data = [[5.6, 0.15, 4.9], [4.7, 0.12, 5.75], [0.22, 3.1, 0.007], [.35, 4.01, 0.23], [43.5, 6.7, 0.1], [51.2, 7.1, 0.25]]
-	competitive_learning(data, 0.1, 4, 200)
+	c = competitive_learning(data, 0.1, 2, 200)
+
+	#print (c)
+
+	for item, val in c.items():
+		print (item, val)

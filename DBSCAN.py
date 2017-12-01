@@ -1,3 +1,4 @@
+import Analyze
 import multiprocessing as mp
 import numpy as np
 from collections import deque
@@ -107,12 +108,14 @@ def load_data(file_name):
 
 
 # Plot the clusters
-def cluster(data_pts, radius, minpts):
+def dbscan(data_pts, radius, minpts, score_funcs=None):
     labels = dbscan(data_pts, radius, minpts)
 
     clusters = defaultdict(list)
     for key, label in labels.items():
         clusters[label].append(key)
+
+    result = [Analyze.analyze_clusters(clusters, score_funcs)]
 
     cluster_color = {}
     c = ['r', 'b', 'g', 'y', 'c', 'b']
@@ -134,4 +137,4 @@ def cluster(data_pts, radius, minpts):
     plt.scatter(x, y, c=color)
     plt.show()
 
-    return clusters
+    return result

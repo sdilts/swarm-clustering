@@ -34,7 +34,7 @@ def core_point(index, all_points, radius, minpts):
     return None
 
 
-def dbscan(data_points, radius, minpts):
+def _cluster(data_points, radius, minpts):
     # Calculate which pts are core using multiple processes for speed
     t0 = time.time()
     pool = mp.Pool(processes=4)
@@ -109,7 +109,7 @@ def load_data(file_name):
 
 # Plot the clusters
 def dbscan(data_pts, radius, minpts, score_funcs=None):
-    labels = dbscan(data_pts, radius, minpts)
+    labels = _cluster(data_pts, radius, minpts)
 
     clusters = defaultdict(list)
     for key, label in labels.items():

@@ -1,13 +1,5 @@
 import numpy as np
 
-def score_1(clusters):
-	return 1
-score_1.name = "Score 1"
-
-def score_2(clusters):
-	return 2
-score_2.name= "Score 2"
-
 def cluster_sse(clusters):
 	''' The cluster SSE evaluation method. This method calculates the summed
 		squared error, measured by the distance between the centroid of each
@@ -17,7 +9,7 @@ def cluster_sse(clusters):
 	centroids = _calculate_centroids(clusters)
 
 	for i, cluster in enumerate(clusters):
-		
+
 		total_sse += _single_cluster_sse(cluster, centroids[i])
 
 	return total_sse
@@ -40,7 +32,7 @@ def silhouette_coefficient(clusters):
 	''' The silhouette coefficient evaluation method. This method combines
 		cohesion and separation by calculating the average distance from the
 		centroid of each cluster to the data points within that cluster as
-		well as the minimum separation of each cluster. These are combined to 
+		well as the minimum separation of each cluster. These are combined to
 		a single measure. '''
 
 	s_c = 0
@@ -95,7 +87,7 @@ def _minimum_separation(centroids, i):
 
 def _calculate_centroids(clusters):
 	''' Given a clustering, compute the centroids for each cluster. '''
-	
+
 	centroids = []
 
 	for label, data in clusters.items():
@@ -119,7 +111,7 @@ if __name__ == '__main__':
 	for c in clusters:
 		print (c)
 	print ("")
-	
+
 	centroids = _calculate_centroids(clusters)
 	print ("Centroids: ")
 	for centroid in centroids:

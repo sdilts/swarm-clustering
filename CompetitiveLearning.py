@@ -4,20 +4,23 @@ import collections
 
 '''This module contains the functionality for the competitive learning clustering algorithm.'''
 
-def competitive_learning(data_set, eta, num_clusters, iterations):
+def competitive_learning(data_set, eta, num_clusters, iterations, score_funcs):
     ''' The main competitive learning algorithm. Creates a two layer network,
         then trains the weights of the netork by updating the weights of the 
         node with the strongest output for each training example '''
 
     num_inputs = len(data_set[0]) #Number of inputs is equal to the number of features
     weight_layer = Layer.Layer(num_inputs, num_clusters, eta)
+    results = []
 
     for iteration in range(iterations):
 
         weight_layer = _train_network(data_set, weight_layer, num_clusters)
+        clustering = _cluster(data_set, weight_layer)
+        result = Analyze.analyze_clusters(clustering, score_funcs)
+        results.append(result)
 
-    clustering = _cluster(data_set, weight_layer)
-    return clustering
+    return results
 
 def _train_network(data_set, weight_layer, num_clusters):
     ''' Given the data set and the current network weights, run one iteration

@@ -1,13 +1,5 @@
 import numpy as np
 
-def score_1(clusters):
-    return 1
-score_1.name = "Score 1"
-
-def score_2(clusters):
-    return 2
-score_2.name= "Score 2"
-
 def cluster_sse(clusters):
     ''' The cluster SSE evaluation method. This method calculates the summed
         squared error, measured by the distance between the centroid of each
@@ -16,8 +8,7 @@ def cluster_sse(clusters):
     total_sse = 0
     centroids = _calculate_centroids(clusters)
 
-    for i, cluster in enumerate(clusters):
-        
+    for i, cluster in clusters.items():
         total_sse += _single_cluster_sse(cluster, centroids[i])
 
     return total_sse
@@ -40,13 +31,13 @@ def silhouette_coefficient(clusters):
     ''' The silhouette coefficient evaluation method. This method combines
         cohesion and separation by calculating the average distance from the
         centroid of each cluster to the data points within that cluster as
-        well as the minimum separation of each cluster. These are combined to 
+        well as the minimum separation of each cluster. These are combined to
         a single measure. '''
 
     s_c = 0
     centroids = _calculate_centroids(clusters)
 
-    for i, cluster in enumerate(clusters):
+    for i, cluster in clusters.items():
 
         avg_dist = _average_distance(cluster, centroids[i])
         separation = _minimum_separation(centroids, i)
@@ -83,7 +74,7 @@ def _minimum_separation(centroids, i):
 
     min_dist = float("inf")
 
-    for j, centroid in enumerate(centroids):
+    for j, centroid in centroids.items():
 
         if j != i:  #Don't want to consider the current centroid, distance would be zero
             dist = np.linalg.norm(centroids[i] - centroid)
@@ -95,13 +86,13 @@ def _minimum_separation(centroids, i):
 
 def _calculate_centroids(clusters):
     ''' Given a clustering, compute the centroids for each cluster. '''
-    
-    centroids = []
 
-    for cluster in clusters:
+    centroids = dict()
+
+    for i, cluster in clusters.items():
 
         centroid = np.mean(cluster, axis=0)
-        centroids.append(centroid)
+        centroids[i] = centroid
 
     return centroids
 
@@ -109,21 +100,21 @@ def _calculate_centroids(clusters):
 
 if __name__ == '__main__':
 
-    cluster1 = [np.array([1, 2, 3]), np.array([2, 4, 3])]
+    cluster1 = [np.array([1, 2, 3]), np.array([2, 4, 1])]
     cluster2 = [np.array([.1, .2, .3]), np.array([.2, .4, .3])]
-    cluster3 = [np.array([11, 21, 23]), np.array([21, 14, 2600]), np.array([17, 22, 16])]
+    cluster3 = [np.array([11, 21, 23]), np.array([21, 14, 26]), np.array([17, 22, 16])]
 
-    clusters = [cluster1, cluster2, cluster3]
+    clusters = {1 :cluster1, 2 : cluster2, 3 : cluster3 }
 
     print ("Clusters: ")
     for c in clusters:
         print (c)
     print ("")
-    
+
     centroids = _calculate_centroids(clusters)
     print ("Centroids: ")
     for centroid in centroids:
         print (str(centroid))
 
-    error = silhouette_coefficient(clusters)
+    error = cluster_sse(clusters)
     print ("Error:" + str(error))

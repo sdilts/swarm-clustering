@@ -37,7 +37,7 @@ def silhouette_coefficient(clusters):
     s_c = 0
     centroids = _calculate_centroids(clusters)
 
-    for i, cluster in enumerate(clusters):
+    for i, cluster in clusters.items():
 
         avg_dist = _average_distance(cluster, centroids[i])
         separation = _minimum_separation(centroids, i)
@@ -74,7 +74,7 @@ def _minimum_separation(centroids, i):
 
     min_dist = float("inf")
 
-    for j, centroid in enumerate(centroids):
+    for j, centroid in centroids.items():
 
         if j != i:  #Don't want to consider the current centroid, distance would be zero
             dist = np.linalg.norm(centroids[i] - centroid)
@@ -100,11 +100,11 @@ def _calculate_centroids(clusters):
 
 if __name__ == '__main__':
 
-    cluster1 = [np.array([1, 2, 3]), np.array([2, 4, 3])]
+    cluster1 = [np.array([1, 2, 3]), np.array([2, 4, 1])]
     cluster2 = [np.array([.1, .2, .3]), np.array([.2, .4, .3])]
-    cluster3 = [np.array([11, 21, 23]), np.array([21, 14, 2600]), np.array([17, 22, 16])]
+    cluster3 = [np.array([11, 21, 23]), np.array([21, 14, 26]), np.array([17, 22, 16])]
 
-    clusters = [cluster1, cluster2, cluster3]
+    clusters = {1 :cluster1, 2 : cluster2, 3 : cluster3 }
 
     print ("Clusters: ")
     for c in clusters:
@@ -116,5 +116,5 @@ if __name__ == '__main__':
     for centroid in centroids:
         print (str(centroid))
 
-    error = silhouette_coefficient(clusters)
+    error = cluster_sse(clusters)
     print ("Error:" + str(error))

@@ -2,6 +2,7 @@
 # import score_funcs
 import KMeans
 import DBSCAN
+import CompetitiveLearning
 import os
 import random
 
@@ -31,6 +32,16 @@ def build_dbscan_func(radius, minpts):
 
     run_function.params = params
     run_function.alg_name = "DBSCAN"
+    return run_function
+
+def build_cl_function(eta, num_clusters, iterations):
+    params = locals()
+
+    def run_function(dataset, score_funcs):
+        return CompetitiveLearning.competitive_learning(dataset, eta, num_clusters, iterations, score_funcs)
+
+    run_function.params = params
+    run_function.alg_name = "Competitive Learning"
     return run_function
 
 if __name__ == '__main__':

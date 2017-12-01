@@ -5,7 +5,7 @@ from collections import deque
 from collections import defaultdict
 import time
 import random
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 '''This module contains the functionality for the DBSCAN clustering algorithm.'''
 
@@ -43,7 +43,7 @@ def _cluster(data_points, radius, minpts):
     t1 = time.time()
     print("Pool Time %s: " % (t1-t0))
 
-    # Add core pts to a dictionary for fast membership check
+    # Add core pts to a dictionary for fast membership check, with point as key, and neighbors as values
     core_set = {}
     for pt in core_pts:
         if pt is not None:
@@ -54,15 +54,18 @@ def _cluster(data_points, radius, minpts):
     for pt in data_points:
         cluster_label[pt] = "unknown"
 
-    # Assign pts to cluster
+    # Assign pts to cluster, starting with a core pt
     label_num = 0
     for core_pt, neighbor in core_set.items():
+        # If core pt is unknown assign it to a new cluster
         if cluster_label[core_pt] == "unknown":
             label_num += 1
             cluster_label[core_pt] = label_num
             queue = deque()
             queue.append(core_pt)
 
+        # When a new core point is encountered in the neighborhood of another core point it is added to a queue
+        # In this way all "density reachable" points from the initial core pt are added to the current cluster
         while len(queue) > 0:
             current_point = queue.popleft()
 
@@ -117,24 +120,24 @@ def dbscan(data_pts, radius, minpts, score_funcs=None):
 
     result = [Analyze.analyze_clusters(clusters, score_funcs)]
 
-    cluster_color = {}
-    c = ['r', 'b', 'g', 'y', 'c', 'b']
-    x = []
-    y = []
-    color = []
-    for key, cluster in labels.items():
-        if cluster is not "unknown":
-            x.append(key[0])
-            y.append(key[1])
-
-            if cluster not in cluster_color:
-                cur = c.pop(0)
-                cluster_color[cluster] = cur
-                c.append(cur)
-
-            color.append(cluster_color[cluster])
-
-    plt.scatter(x, y, c=color)
-    plt.show()
+    # cluster_color = {}
+    # c = ['r', 'b', 'g', 'y', 'c', 'b']
+    # x = []
+    # y = []
+    # color = []
+    # for key, cluster in labels.items():
+    #     if cluster is not "unknown":
+    #         x.append(key[0])
+    #         y.append(key[1])
+    #
+    #         if cluster not in cluster_color:
+    #             cur = c.pop(0)
+    #             cluster_color[cluster] = cur
+    #             c.append(cur)
+    #
+    #         color.append(cluster_color[cluster])
+    #
+    # plt.scatter(x, y, c=color)
+    # plt.show()
 
     return result

@@ -18,7 +18,7 @@ def competitive_learning(data_set, eta, num_clusters, iterations, score_funcs):
         weight_layer = _train_network(data_set, weight_layer, num_clusters)
         clustering = _cluster(data_set, weight_layer)
         result = Analyze.analyze_clusters(clustering, score_funcs)
-        results.append(results)
+        results.append(result)
 
     return results
 

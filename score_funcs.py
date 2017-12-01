@@ -37,7 +37,7 @@ def silhouette_coefficient(clusters):
     s_c = 0
     centroids = _calculate_centroids(clusters)
 
-    for i, cluster in enumerate(clusters):
+    for i, cluster in clusters.items():
 
         avg_dist = _average_distance(cluster, centroids[i])
         separation = _minimum_separation(centroids, i)
@@ -74,7 +74,7 @@ def _minimum_separation(centroids, i):
 
     min_dist = float("inf")
 
-    for j, centroid in enumerate(centroids):
+    for j, centroid in centroids.items():
 
         if j != i:  #Don't want to consider the current centroid, distance would be zero
             dist = np.linalg.norm(centroids[i] - centroid)

@@ -8,7 +8,7 @@ def cluster_sse(clusters):
     total_sse = 0
     centroids = _calculate_centroids(clusters)
 
-    for i, cluster in enumerate(clusters):
+    for i, cluster in clusters.items():
         total_sse += _single_cluster_sse(cluster, centroids[i])
 
     return total_sse
@@ -87,12 +87,12 @@ def _minimum_separation(centroids, i):
 def _calculate_centroids(clusters):
     ''' Given a clustering, compute the centroids for each cluster. '''
 
-    centroids = []
+    centroids = dict()
 
-    for cluster in clusters:
+    for i, cluster in clusters.items():
 
         centroid = np.mean(cluster, axis=0)
-        centroids.append(centroid)
+        centroids[i] = centroid
 
     return centroids
 

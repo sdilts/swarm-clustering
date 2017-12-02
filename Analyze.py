@@ -2,6 +2,7 @@
 import os, getpass, errno
 import pandas as pd
 import time
+import DelayedKeyboardInterrupt as dk
 
 def _create_output_folder(dataset_name, alg_name):
     """Returns the folder where the output files should be saved.
@@ -14,7 +15,8 @@ def _create_output_folder(dataset_name, alg_name):
     # Make output directory
     try:
         os.makedirs(folder_dir)
-        print("Output directory created at " + folder_dir)
+        print("Output directory created at",
+              os.path.relpath(folder_dir,os.path.dirname(os.path.abspath(__file__))))
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
@@ -29,7 +31,8 @@ def _create_output_folder(dataset_name, alg_name):
         # Make output for this run:
         try:
             os.makedirs(output_dir)
-            print("Data directory created at " + output_dir)
+            print("Data directory created at",
+                  os.path.relpath(output_dir,os.path.dirname(os.path.abspath(__file__))))
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
@@ -58,43 +61,63 @@ def _compute_statistics(data_frame):
     stats["min"] = data_frame.min()
     return pd.DataFrame(stats)
 
+def _save_run_data(save_loc,final_states, iteration_results):
+    print("\nSaving Data\n-----------------------")
+    #convert all of our final vaules into pandas dataframes:
+    final_table = pd.DataFrame(final_states)
+    # do some anaylisis on the data:
+    stats = _compute_statistics(final_table)
+    # save the file as the summary:
+    print("Saving final data... ", end='')
+    stats.to_csv(os.path.join(save_loc, "final_stats.csv"), index=True, header=True)
+    final_table.to_csv(os.path.join(save_loc, "final_data.csv"), header=True)
+    print("Done.")
+    # only do the iteration data if it is different than that of final data:
+    if len(iteration_results[0]) > 1:
+        print("Saving iteration data..",end='')
+        #convert all iteration data into pandas dataframes:
+        iteration_tables = [pd.DataFrame(results) for results in iteration_results]
+        for i, tbl in enumerate(iteration_tables):
+            tbl.to_csv(os.path.join(save_loc, "iteration" + str(i) + "_data.csv"), header=True)
+        print(" Done")
+        print("Saving convergence data..", end='')
+        # the number of rows should be the number of iterations it took to converge:
+        convg_data = pd.DataFrame([tbl.shape[0] for tbl in iteration_tables],columns=["iterations to convergence"])
+        convg_data.to_csv(os.path.join(save_loc, "convg_data.csv"), index=True, header=True)
+        convg_stats = _compute_statistics(convg_data)
+        convg_stats.to_csv(os.path.join(save_loc, "convg_stats.csv"), index=True, header=True)
+        print(" Done")
+
+    else:
+        print("Iteration data same as final data. Not saving.")
+
+
 def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
     save_loc = _create_output_folder(dataset_name, alg_func.alg_name)
     _save_run_info(save_loc, alg_func, score_funcs, dataset_name)
     iteration_results = []
     final_states = []
 
-    for i in range(repeat):
-        results = alg_func(dataset, score_funcs)
-        # assumes that the last item in the list is the final result:
-        final_states.append(results[-1])
-        iteration_results.append(results)
+    try:
+        print("\nRunning Tests\n-----------------------")
+        for i in range(repeat):
+            print("Running test",i+1,"out of", repeat,"...")
+            results = alg_func(dataset, score_funcs)
+            # assumes that the last item in the list is the final result:
+            final_states.append(results[-1])
+            iteration_results.append(results)
+    except KeyboardInterrupt:
+        print("\033[1;31m\nTerminating testing Prematurely\n\033[0m\n")
 
-    #convert all of our final vaules into pandas dataframes:
-    final_table = pd.DataFrame(final_states)
-    # do some anaylisis on the data:
-    stats = _compute_statistics(final_table)
-    # save the file as the summary:
-    print("Saving final data...")
-    stats.to_csv(os.path.join(save_loc, "final_stats.csv"), index=True, header=True)
-    final_table.to_csv(os.path.join(save_loc, "final_data.csv"), header=True)
-    print("Done.")
-    # only do the iteration data if it is different than that final data:
-    if len(iteration_results[0]) > 1:
-        print("Saving iteration data..")
-        #convert all iteration data into pandas dataframes:
-        iteration_tables = [pd.DataFrame(results) for results in iteration_results]
-        for i, tbl in enumerate(iteration_tables):
-            tbl.to_csv(os.path.join(save_loc, "iteration" + str(i) + "_data.csv"), header=True)
-        print("Done")
-    else:
-        print("Iteration data same as final data. Not saving.")
+    with dk.DelayedKeyboardInterrupt():
+        _save_run_data(save_loc, final_states,iteration_results)
 
+    print("\nAll finished.\nHave a nice day!\n")
 
-def analyze_clusters(clusters, score_funcs):
+def analyze_clusters(clusters, score_fns):
     """Analyzes the cluster based on the score functions given.
     """
     results = dict()
-    for func in score_funcs:
+    for func in score_fns:
         results[func.name] = func(clusters)
     return results

@@ -27,14 +27,14 @@ def _initialize_pheramones(dataset, num_clusters):
 
     return pheramone_matrix
 
-def _initialize_ants(dataset, num_ants, num_clusters):
+def _initialize_ants(dataset, num_ants, num_clusters, beta):
     ''' Initialize the population of ants. '''
 
     ants = []
 
     for i in range(num_ants):
 
-        ant = Ant.ant(dataset, num_clusters)
+        ant = Ant.ant(dataset, num_clusters, beta)
         ants.append(ant)
 
     return ants

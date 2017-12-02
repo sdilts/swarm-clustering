@@ -68,9 +68,14 @@ def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
 
     for i in range(repeat):
         results = alg_func(dataset, score_funcs)
-        # assumes that the last item in the list is the final result:
-        final_states.append(results[-1])
-        iteration_results.append(results)
+    try:
+        for i in range(repeat):
+            results = alg_func(dataset, score_funcs)
+            # assumes that the last item in the list is the final result:
+            final_states.append(results[-1])
+            iteration_results.append(results)
+    except KeyboardInterrupt:
+        print("\nTerminating testing Prematurely")
 
     #convert all of our final vaules into pandas dataframes:
     final_table = pd.DataFrame(final_states)

@@ -80,7 +80,7 @@ def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
     final_table.to_csv(os.path.join(save_loc, "final_data.csv"), header=True)
     print("Done.")
     # only do the iteration data if it is different than that final data:
-    if len(iteration_results[0]) > 0:
+    if len(iteration_results[0]) > 1:
         print("Saving iteration data..")
         #convert all iteration data into pandas dataframes:
         iteration_tables = [pd.DataFrame(results) for results in iteration_results]

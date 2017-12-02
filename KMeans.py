@@ -52,6 +52,8 @@ def _group_points(dataset, centroids):
     clusterVectors = {}
     # for j in range(len(centroids)):
     #     clusterVectors.append([])
+    for i in range(len(centroids)):
+        clusterVectors[i] = []
 
     for vector in dataset:
         min_dist = float("inf")
@@ -65,11 +67,11 @@ def _group_points(dataset, centroids):
     return clusterVectors
 
 
-def _findMeanVectors(cluster_list, data_set):
+def _findMeanVectors(cluster_dict, data_set):
     """Find the mean vectors for each cluster, then return  that vector
     """
     mean_vectors = []
-    for cluster in cluster_list:
+    for i, cluster in cluster_dict.items():
         if cluster == []:
             mean_vectors.append(np.random.choice(data_set))
         else:

@@ -91,10 +91,10 @@ def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
         print("Iteration data same as final data. Not saving.")
 
 
-def analyze_clusters(clusters, score_funcs):
+def analyze_clusters(clusters, score_fns):
     """Analyzes the cluster based on the score functions given.
     """
     results = dict()
-    for func in score_funcs:
+    for func in score_fns:
         results[func.name] = func(clusters)
     return results

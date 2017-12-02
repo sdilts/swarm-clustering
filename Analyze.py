@@ -14,7 +14,8 @@ def _create_output_folder(dataset_name, alg_name):
     # Make output directory
     try:
         os.makedirs(folder_dir)
-        print("Output directory created at " + folder_dir)
+        print("Output directory created at",
+              os.path.relpath(folder_dir,os.path.dirname(os.path.abspath(__file__))))
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
@@ -29,7 +30,8 @@ def _create_output_folder(dataset_name, alg_name):
         # Make output for this run:
         try:
             os.makedirs(output_dir)
-            print("Data directory created at " + output_dir)
+            print("Data directory created at",
+                  os.path.relpath(output_dir,os.path.dirname(os.path.abspath(__file__))))
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise

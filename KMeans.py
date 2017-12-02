@@ -95,4 +95,5 @@ def kMeans(data_set, score_funcs, k):
         # keep recording the data
         results_list.append(Analyze.analyze_clusters(clusters, score_funcs))
         new_centroids = _findMeanVectors(clusters, data_set)
-    return results_list
+    # last item is a repeat:
+    return results_list[:-1]

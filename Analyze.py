@@ -72,8 +72,8 @@ def _save_run_data(save_loc,final_states, iteration_results):
     stats.to_csv(os.path.join(save_loc, "final_stats.csv"), index=True, header=True)
     final_table.to_csv(os.path.join(save_loc, "final_data.csv"), header=True)
     print("Done.")
-    # only do the iteration data if it is different than that of final data:
-    if len(iteration_results[0]) > 1:
+    # only do the iteration data if any took more than one iteration:
+    if any(len(result) > 1 for result in iteration_results):
         print("Saving iteration data..",end='')
         #convert all iteration data into pandas dataframes:
         iteration_tables = [pd.DataFrame(results) for results in iteration_results]
@@ -108,7 +108,7 @@ def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
                 final_states.append(results[-1])
                 iteration_results.append(results)
     except KeyboardInterrupt:
-        print("\033[1;31m\nTerminating testing Prematurely\n\033[0m\n")
+        print("\033[1;31m\nTesting terminated prematurely\n\033[0m\n")
 
     with dk.DelayedKeyboardInterrupt():
         _save_run_data(save_loc, final_states,iteration_results)

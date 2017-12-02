@@ -103,9 +103,10 @@ def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
         for i in range(repeat):
             print("Running test",i+1,"out of", repeat,"...")
             results = alg_func(dataset, score_funcs)
-            # assumes that the last item in the list is the final result:
-            final_states.append(results[-1])
-            iteration_results.append(results)
+            with dk.DelayedKeyboardInterrupt():
+                # assumes that the last item in the list is the final result:
+                final_states.append(results[-1])
+                iteration_results.append(results)
     except KeyboardInterrupt:
         print("\033[1;31m\nTerminating testing Prematurely\n\033[0m\n")
 

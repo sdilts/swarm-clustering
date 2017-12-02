@@ -66,10 +66,9 @@ def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
     iteration_results = []
     final_states = []
 
-    for i in range(repeat):
-        results = alg_func(dataset, score_funcs)
     try:
         for i in range(repeat):
+            print("Running test",i+1,"out of", repeat,"...")
             results = alg_func(dataset, score_funcs)
             # assumes that the last item in the list is the final result:
             final_states.append(results[-1])
@@ -77,23 +76,32 @@ def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
     except KeyboardInterrupt:
         print("\nTerminating testing Prematurely")
 
+    print("\nSaving Data\n-------------------")
     #convert all of our final vaules into pandas dataframes:
     final_table = pd.DataFrame(final_states)
     # do some anaylisis on the data:
     stats = _compute_statistics(final_table)
     # save the file as the summary:
-    print("Saving final data...")
+    print("Saving final data... ", end='')
     stats.to_csv(os.path.join(save_loc, "final_stats.csv"), index=True, header=True)
     final_table.to_csv(os.path.join(save_loc, "final_data.csv"), header=True)
     print("Done.")
-    # only do the iteration data if it is different than that final data:
+    # only do the iteration data if it is different than that of final data:
     if len(iteration_results[0]) > 1:
-        print("Saving iteration data..")
+        print("Saving iteration data..",end='')
         #convert all iteration data into pandas dataframes:
         iteration_tables = [pd.DataFrame(results) for results in iteration_results]
         for i, tbl in enumerate(iteration_tables):
             tbl.to_csv(os.path.join(save_loc, "iteration" + str(i) + "_data.csv"), header=True)
-        print("Done")
+        print(" Done")
+        print("Saving convergence data..", end='')
+        # the number of rows should be the number of iterations it took to converge:
+        convg_data = pd.DataFrame([tbl.shape[0] for tbl in iteration_tables],columns=["iterations to convergence"])
+        convg_data.to_csv(os.path.join(save_loc, "convg_data.csv"), index=True, header=True)
+        convg_stats = _compute_statistics(convg_data)
+        convg_stats.to_csv(os.path.join(save_loc, "convg_stats.csv"), index=True, header=True)
+        print(" Done")
+
     else:
         print("Iteration data same as final data. Not saving.")
 

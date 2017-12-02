@@ -2,6 +2,7 @@
 import os, getpass, errno
 import pandas as pd
 import time
+import DelayedKeyboardInterrupt as dk
 
 def _create_output_folder(dataset_name, alg_name):
     """Returns the folder where the output files should be saved.
@@ -60,23 +61,8 @@ def _compute_statistics(data_frame):
     stats["min"] = data_frame.min()
     return pd.DataFrame(stats)
 
-def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
-    save_loc = _create_output_folder(dataset_name, alg_func.alg_name)
-    _save_run_info(save_loc, alg_func, score_funcs, dataset_name)
-    iteration_results = []
-    final_states = []
-
-    try:
-        for i in range(repeat):
-            print("Running test",i+1,"out of", repeat,"...")
-            results = alg_func(dataset, score_funcs)
-            # assumes that the last item in the list is the final result:
-            final_states.append(results[-1])
-            iteration_results.append(results)
-    except KeyboardInterrupt:
-        print("\nTerminating testing Prematurely")
-
-    print("\nSaving Data\n-------------------")
+def _save_run_data(save_loc,final_states, iteration_results):
+    print("\nSaving Data\n-----------------------")
     #convert all of our final vaules into pandas dataframes:
     final_table = pd.DataFrame(final_states)
     # do some anaylisis on the data:
@@ -105,6 +91,28 @@ def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
     else:
         print("Iteration data same as final data. Not saving.")
 
+
+def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
+    save_loc = _create_output_folder(dataset_name, alg_func.alg_name)
+    _save_run_info(save_loc, alg_func, score_funcs, dataset_name)
+    iteration_results = []
+    final_states = []
+
+    try:
+        print("\nRunning Tests\n-----------------------")
+        for i in range(repeat):
+            print("Running test",i+1,"out of", repeat,"...")
+            results = alg_func(dataset, score_funcs)
+            # assumes that the last item in the list is the final result:
+            final_states.append(results[-1])
+            iteration_results.append(results)
+    except KeyboardInterrupt:
+        print("\033[1;31m\nTerminating testing Prematurely\n\033[0m\n")
+
+    with dk.DelayedKeyboardInterrupt():
+        _save_run_data(save_loc, final_states,iteration_results)
+
+    print("\nAll finished.\nHave a nice day!\n")
 
 def analyze_clusters(clusters, score_fns):
     """Analyzes the cluster based on the score functions given.

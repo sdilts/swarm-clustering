@@ -5,7 +5,7 @@ import numpy as np
     its own beliefs about the weights of the clusterings, which indicate membership 
     of each data point to a cluster. An ant also holds an array of centroids, which 
     are based on that ant's weight matrix. Finally, given the ant's beliefs, the ant
-    lays down pheramones, which influence the clustering behavior of the other ants
+    lays down pheromones, which influence the clustering behavior of the other ants
     in the population. '''
 
 class ant:

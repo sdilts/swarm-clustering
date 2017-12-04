@@ -1,10 +1,12 @@
 import score_funcs
 import numpy as np
 import Ant
+import collections
+from operator import itemgetter
 
 '''This module contains the functionality for the Ant Colony Optimization Clustering algorithm.'''
 
-def ACO(dataset, iterations, num_clusters, num_ants, beta, score_funcs, prob_cutoff):
+def ACO(dataset, iterations, num_clusters, num_ants, beta, score_funcs, prob_cutoff, num_elite_ants):
     ''' The main function for the ACO algorithm. Takes in the dataset to be clustered, 
         maximum number of iterations, the number of ants to be included, and the score
         functions to be used. Creates individual ants, tracks the pheromone matrix,
@@ -12,10 +14,9 @@ def ACO(dataset, iterations, num_clusters, num_ants, beta, score_funcs, prob_cut
 
     pheromone_matrix = _initialize_pheromones(dataset, num_clusters)
     ants = _initialize_ants(dataset, num_ants, num_clusters, beta, prob_cutoff, pheromone_matrix)
-
-    print("Pheromones:")
-    print(pheromone_matrix)
-    print ("")
+    best_score = iteration_best_score = float("inf")
+    best_clustering = None
+    results = []
 
     _print_ant_info(ants)
 
@@ -30,21 +31,35 @@ def ACO(dataset, iterations, num_clusters, num_ants, beta, score_funcs, prob_cut
                         
                 ant.update_beliefs() #Could potentially parallelize this step
 
-        #After all data points have been classified for all ants update pheromones
-        #and reset memory lists
-        ants = _rank_ants(ants)
-        pheromone_matrix = _update_pheromones(pheromone_matrix, ants)
+        #After all data points have been classified for all ants, rank the ants by objective function
+        rank_info = _rank_ants(ants)
+        ants = [ranked_ant[0] for ranked_ant in rank_info.ants_and_scores]
+        
+        #Let the elite (best scoring) ants update the pheromone matrix, then update ants' matrices
+        pheromone_matrix = _update_pheromones(pheromone_matrix, ants[0:num_elite_ants])
         _update_ants_pheromones(pheromone_matrix, ants)
+
+        iteration_best_score = rank_info.best_score
+        iteration_best_clustering = rank_info.best_clustering
+        results.append(iteration_best_score)
+
+        if iteration_best_score < best_score:
+            best_score = iteration_best_score
+            best_clustering = iteration_best_clustering
+
+        #Reset the ants' memory lists
         _reset_ants(ants)
 
         _print_ant_info(ants)
+        print ("Best score this iteration: " + str(iteration_best_score))
 
     print ("------------------------------------------")
     print ("")
+    print ("Best score: " + str(best_score))
+    print ("Best cluster: ")
+    print (best_clustering)
 
-    for a in ants:
-        clust = a.get_clustering()
-        print (clust)
+    return results
 
 
 def _initialize_pheromones(dataset, num_clusters):
@@ -80,8 +95,29 @@ def _reset_ants(ants):
         ant.reset_memory()
 
 def _rank_ants(ants):
+    ''' Rank the ants (best to worst) in terms of the cluster sse objective function. 
+        Return the best score and the best clustering found this iteration. '''
 
-    return ants
+    iteration_best_score = float("inf")
+    iteration_best_clustering = None
+    ranked_ants = []
+    ant_rank = collections.namedtuple('ant_rank', ['best_score', 'best_clustering', 'ants_and_scores'])
+
+    for ant in ants:
+        clusters = ant.get_clustering()
+        sse = score_funcs.cluster_sse(clusters)
+        ranked_ants.append((ant, sse))
+
+        #If best score see
+        if sse < iteration_best_score:
+            iteration_best_score = sse
+            iteration_best_clustering = clusters
+
+    ranked_ants = sorted(ranked_ants, key=itemgetter(1))
+
+    return_info = ant_rank(iteration_best_score, iteration_best_clustering, ranked_ants)
+    return return_info
+    
 
 def _update_pheromones(pheromones, ants):
     ''' Update the pheromone matrix based on the newly ranked ants. '''
@@ -107,5 +143,5 @@ def _print_ant_info(ants):
 if __name__ == '__main__':
 
     scores = [score_funcs.cluster_sse]
-    data = [[1, 2, 3], [.023, .222, .999], [3, 2, 6], [.015, .322, .897]]
-    ACO(data, iterations = 3, num_clusters = 2, num_ants = 2, beta = 0.5, score_funcs = scores, prob_cutoff = 0.75)
+    data = [[15, 26, 13], [.023, .222, .999], [13, 22, 16], [.015, .322, .897]]
+    ACO(data, iterations = 3, num_clusters = 2, num_ants = 2, beta = 0.5, score_funcs = scores, prob_cutoff = 0.75, num_elite_ants = 1)

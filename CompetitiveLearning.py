@@ -6,12 +6,13 @@ import Analyze
 
 '''This module contains the functionality for the competitive learning clustering algorithm.'''
 
+
 def competitive_learning(data_set, eta, num_clusters, iterations, score_funcs):
     ''' The main competitive learning algorithm. Creates a two layer network,
-        then trains the weights of the netork by updating the weights of the 
+        then trains the weights of the network by updating the weights of the
         node with the strongest output for each training example '''
 
-    num_inputs = len(data_set[0]) #Number of inputs is equal to the number of features
+    num_inputs = len(data_set[0])  # Number of inputs is equal to the number of features
     weight_layer = Layer.Layer(num_inputs, num_clusters, eta)
     results = []
 
@@ -20,9 +21,11 @@ def competitive_learning(data_set, eta, num_clusters, iterations, score_funcs):
         weight_layer = _train_network(data_set, weight_layer, num_clusters)
         clustering = _cluster(data_set, weight_layer)
         result = Analyze.analyze_clusters(clustering, score_funcs)
+        # print("In CL result: %s" % str(result))
         results.append(result)
 
     return results
+
 
 def _train_network(data_set, weight_layer, num_clusters):
     ''' Given the data set and the current network weights, run one iteration
@@ -36,12 +39,13 @@ def _train_network(data_set, weight_layer, num_clusters):
         weight_layer.update_weights(winner_node, data_point)
         winners_seen.append(winner_node)
 
-    #If a cluster hasn't been selected, randomize it's weights before the next round
+    # If a cluster hasn't been selected, randomize it's weights before the next round
     for i in range(num_clusters):
         if i not in winners_seen:
             weight_layer.randomize_weights(i, len(weight_layer.weights[i]))
 
     return weight_layer
+
 
 def _select_cluster(data_point, weights):
     ''' Given a data point and the current weights, compute which cluster the
@@ -59,7 +63,8 @@ def _select_cluster(data_point, weights):
 
     return selected_cluster
 
-def _cluster (data_set, weight_layer):
+
+def _cluster(data_set, weight_layer):
 
     clustering = collections.defaultdict(list)
 
@@ -71,15 +76,15 @@ def _cluster (data_set, weight_layer):
 
 
 if __name__ == '__main__':
-    
+
     scores = [score_funcs.cluster_sse]
     #data = [[5.6, 0.15, 4.9], [4.7, 0.12, 5.75], [0.22, 3.1, 0.007], [.35, 4.01, 0.23], [43.5, 6.7, 0.1], [51.2, 7.1, 0.25]]
-    
+
     file = open("iris.data", "r")
     data_lines = file.readlines()
     data = []
     for line in data_lines:
-        
+
         data_line = line.split(",")[0:4]
         if len(data_line) > 2:
             data.append(data_line)
@@ -88,9 +93,8 @@ if __name__ == '__main__':
         for j in range(len(data[i])):
             data[i][j] = float(data[i][j])
 
-
-    c = competitive_learning(data_set = data, eta = 0.1, num_clusters = 3,
-    iterations = 100, score_funcs = scores)
+    c = competitive_learning(data_set=data, eta=0.1, num_clusters=3,
+                             iterations=100, score_funcs=scores)
 
     for thing in c:
         print(thing["Cluster SSE"])

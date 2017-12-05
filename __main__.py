@@ -16,7 +16,7 @@ class build_GA_Menu(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.master = master
-        self.init_gui()
+        #self.init_gui()
 
         self.master.title("Clustering Analysis")
         self.pack(fill=BOTH, expand=1)
@@ -47,27 +47,28 @@ class build_GA_Menu(Frame):
 
     def run(self):
         # First the selected dataset needs to be loaded
-        if self.data_selection == "Iris":
+        if self.data_selection.get() == "Iris":
+            print ("Selecting Iris!")
             data = load_data.load_iris()
-        elif self.data_selection == "Seeds":
+        elif self.data_selection.get() == "Seeds":
             data = load_data.load_seeds()
-        elif self.data_selection == "Glass":
+        elif self.data_selection.get() == "Glass":
             data = load_data.load_glass()
-        elif self.data_selection == "Banknote":
+        elif self.data_selection.get() == "Banknote":
             data = load_data.load_banknote()
-        elif self.data_selection == "Customers":
+        elif self.data_selection.get() == "Customers":
             data = load_data.load_cust_data()
 
         # Now run the selected clustering algorithm
-        score_list = [score_funcs.score_1, score_funcs.score_2]
-        if self.alg_selection == "K-Means":
-            Analyze.analyze(data, self.data_selection, 10, self.build_kMeans_func(2), score_list)
-        elif self.alg_selection == "DBSCAN":
-            Analyze.analyze(data, self.data_selection, 10, self.build_dbscan_func(10, 4), score_list)
-        elif self.alg_selection == "Competitive Learning":
-            Analyze.analyze(data, self.data_selection, 10, self.build_cl_func(2, 10, 4), score_list)
-        elif self.alg_selection == "PSO":
-            Analyze.analyze(data, self.data_selection, 10, self.build_pso_function(10, 3, 0.72, 1.5, 1.3, 100))
+        score_list = [score_funcs.cluster_sse]
+        if self.alg_selection.get() == "K-Means":
+            Analyze.analyze(data, self.data_selection.get(), 10, self.build_kMeans_func(2), score_list)
+        elif self.alg_selection.get() == "DBSCAN":
+            Analyze.analyze(data, self.data_selection.get(), 10, self.build_dbscan_func(10, 4), score_list)
+        elif self.alg_selection.get() == "Competitive Learning":
+            Analyze.analyze(data, self.data_selection.get(), 10, self.build_cl_func(0.5, 3, 10), score_list)
+        elif self.alg_selection.get() == "PSO":
+            Analyze.analyze(data, self.data_selection.get(), 10, self.build_pso_function(10, 3, 0.72, 1.5, 1.3, 100))
 
     # pass the build function the arguments to the function
     def build_kMeans_func(self, k):
@@ -95,7 +96,7 @@ class build_GA_Menu(Frame):
         run_function.alg_name = "DBSCAN"
         return run_function
 
-    def build_cl_function(self, eta, num_clusters, iterations):
+    def build_cl_func(self, eta, num_clusters, iterations):
         params = locals()
 
         def run_function(dataset, score_funcs):
@@ -117,11 +118,11 @@ class build_GA_Menu(Frame):
 
 if __name__ == '__main__':
     # Analyze.analyze(dataset, "test", 10, build_kMeans_func(2), score_list)
-    # root = Tk()
-    # app = build_GA_Menu(root)
-    # root.mainloop()
+    root = Tk()
+    app = build_GA_Menu(root)
+    root.mainloop()
 
-    data1 = [(random.uniform(0, 1), random.uniform(0, 1)) for i in range(50)]
+    '''data1 = [(random.uniform(0, 1), random.uniform(0, 1)) for i in range(50)]
     data2 = [(random.uniform(3, 4), random.uniform(4, 5)) for i in range(50)]
     data = data1 + data2
 
@@ -146,7 +147,7 @@ if __name__ == '__main__':
 
     plt.figure()
     plt.plot(result[1])
-    plt.show()
+    plt.show()'''
 
 
     # score_list = [score_funcs.score_1, score_funcs.score_2]

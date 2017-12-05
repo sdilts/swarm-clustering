@@ -1,5 +1,6 @@
 import numpy as np
 import Layer
+import Analyze
 import collections
 
 '''This module contains the functionality for the competitive learning clustering algorithm.'''

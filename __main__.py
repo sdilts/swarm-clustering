@@ -4,6 +4,7 @@ import KMeans
 import DBSCAN
 import CompetitiveLearning
 import PSO
+import load_data
 import os
 import random
 from tkinter import *
@@ -17,7 +18,6 @@ class build_GA_Menu(Frame):
         self.master = master
         self.init_gui()
 
-    def init_gui(self):
         self.master.title("Clustering Analysis")
         self.pack(fill=BOTH, expand=1)
 
@@ -46,7 +46,28 @@ class build_GA_Menu(Frame):
         classButton.grid(row=1, column=2)
 
     def run(self):
-        pass
+        # First the selected dataset needs to be loaded
+        if self.data_selection == "Iris":
+            data = load_data.load_iris()
+        elif self.data_selection == "Seeds":
+            data = load_data.load_seeds()
+        elif self.data_selection == "Glass":
+            data = load_data.load_glass()
+        elif self.data_selection == "Banknote":
+            data = load_data.load_banknote()
+        elif self.data_selection == "Customers":
+            data = load_data.load_cust_data()
+
+        # Now run the selected clustering algorithm
+        score_list = [score_funcs.score_1, score_funcs.score_2]
+        if self.alg_selection == "K-Means":
+            Analyze.analyze(data, self.data_selection, 10, self.build_kMeans_func(2), score_list)
+        elif self.alg_selection == "DBSCAN":
+            Analyze.analyze(data, self.data_selection, 10, self.build_dbscan_func(10, 4), score_list)
+        elif self.alg_selection == "Competitive Learning":
+            Analyze.analyze(data, self.data_selection, 10, self.build_cl_func(2, 10, 4), score_list)
+        elif self.alg_selection == "PSO":
+
 
     # pass the build function the arguments to the function
     def build_kMeans_func(self, k):
@@ -74,7 +95,7 @@ class build_GA_Menu(Frame):
         run_function.alg_name = "DBSCAN"
         return run_function
 
-    def build_cl_function(eta, num_clusters, iterations):
+    def build_cl_function(self, eta, num_clusters, iterations):
         params = locals()
 
         def run_function(dataset, score_funcs):
@@ -84,7 +105,18 @@ class build_GA_Menu(Frame):
         run_function.alg_name = "Competitive Learning"
         return run_function
 
+    def build_pso_function(self, num_particles, num_centroids, inertia, accel_1, accel_2, max_iter):
+        params = locals()
+
+        def run_function(dataset, score_funcs):
+            return PSO.PSO(num_particles, num_centroids, inertia, accel_1, accel_2, max_iter, dataset, score_funcs=score_funcs)
+
+        run_function.params = params
+        run_function.alg_name == "PSO"
+        return run_function
+
 if __name__ == '__main__':
+    # Analyze.analyze(dataset, "test", 10, build_kMeans_func(2), score_list)
     # root = Tk()
     # app = build_GA_Menu(root)
     # root.mainloop()

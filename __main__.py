@@ -114,7 +114,7 @@ class build_GA_Menu(Frame):
             return PSO.PSO(num_particles, num_centroids, inertia, accel_1, accel_2, max_iter, dataset, score_funcs=score_funcs)
 
         run_function.params = params
-        run_function.alg_name == "PSO"
+        run_function.alg_name = "PSO"
         return run_function
 
 if __name__ == '__main__':

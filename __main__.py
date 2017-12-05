@@ -67,7 +67,7 @@ class build_GA_Menu(Frame):
         elif self.alg_selection == "Competitive Learning":
             Analyze.analyze(data, self.data_selection, 10, self.build_cl_func(2, 10, 4), score_list)
         elif self.alg_selection == "PSO":
-
+            Analyze.analyze(data, self.data_selection, 10, self.build_pso_function(10, 3, 0.72, 1.5, 1.3, 100))
 
     # pass the build function the arguments to the function
     def build_kMeans_func(self, k):

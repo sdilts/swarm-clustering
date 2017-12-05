@@ -1,6 +1,7 @@
 import Particle
 import Analyze
 import sys
+import os
 import numpy as np
 from collections import defaultdict
 import matplotlib.pyplot as plt
@@ -34,7 +35,7 @@ def pso(num_particles, k, w, c1, c2, max_iter, data, score_funcs=None):
     for i in range(max_iter):
         # print("iteration: %s" % i)
 
-        print("init global best: %s" % (str(global_best)))
+        # print("init global best: %s" % (str(global_best)))
 
         # Update global fitness if a particle local fitness is better
         for particle in swarm:
@@ -43,23 +44,24 @@ def pso(num_particles, k, w, c1, c2, max_iter, data, score_funcs=None):
                 global_fitness = particle.fitness_val
         g_fit.append(global_fitness)
 
+        clusters = assign_cluster(data, global_best)
+        results_list.append(Analyze.analyze_clusters(clusters, score_funcs))
+
         # Update the positions and velocities of the particle
         for particle in swarm:
             particle.update_particle(global_best, data)
 
-        clusters = assign_cluster(data, global_best)
-        results_list.append(Analyze.analyze_clusters(clusters, score_funcs))
-
     # return global_best, g_fit
     # plt.plot(g_fit)
     # plt.show()
-    return results_list
+    return g_fit
 
 
 # Method to assign data points to a cluster
 def assign_cluster(data, global_best):
     clusters = defaultdict(list)
     for pt in data:
+        pt = np.array(pt)
         dist_to_cluster = [distance(pt, k) for k in global_best]
 
         # Assign the point to the closest centroid
@@ -73,9 +75,3 @@ def distance(vec1, vec2):
     diff = vec1 - vec2
     dist = np.linalg.norm(diff)
     return dist
-
-
-
-
-
-

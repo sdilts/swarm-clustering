@@ -99,7 +99,7 @@ def _calculate_centroids(clusters):
 
         centroid = np.mean(cluster, axis=0)
         centroids[i] = centroid
-    print("score centroids are: %s\n" % str(centroids))
+    # print("score centroids are: %s\n" % str(centroids))
     return centroids
 
 

@@ -64,12 +64,13 @@ class build_GA_Menu(Frame):
         if self.alg_selection.get() == "K-Means":
             Analyze.analyze(data, self.data_selection.get(), 10, self.build_kMeans_func(2), score_list)
         elif self.alg_selection.get() == "DBSCAN":
+            # Iris params: 0.5, 4
             # DBSCAN.parameter_selection(4, data)
             Analyze.analyze(data, self.data_selection.get(), 10, self.build_dbscan_func(0.5, 4), score_list)
         elif self.alg_selection.get() == "Competitive Learning":
             Analyze.analyze(data, self.data_selection.get(), 10, self.build_cl_func(0.1, 3, 100), score_list)
         elif self.alg_selection.get() == "PSO":
-            Analyze.analyze(data, self.data_selection.get(), 5, self.build_pso_function(10, 3, 0.72, 1.5, 1.3, 100), score_list)
+            Analyze.analyze(data, self.data_selection.get(), 5, self.build_pso_function(5, 3, 0.8, 1.5, 1.3, 100), score_list)
 
     # pass the build function the arguments to the function
     def build_kMeans_func(self, k):
@@ -123,32 +124,32 @@ if __name__ == '__main__':
     app = build_GA_Menu(root)
     root.mainloop()
 
-    '''data1 = [(random.uniform(0, 1), random.uniform(0, 1)) for i in range(50)]
-    data2 = [(random.uniform(3, 4), random.uniform(4, 5)) for i in range(50)]
-    data = data1 + data2
-
-    result = PSO.PSO(10, 2, 0.75, 0.75, 1.2, 100, 0.001, data)
-
-    x = []
-    y = []
-    for pt in data:
-        x.append(pt[0])
-        y.append(pt[1])
-
-    plt.scatter(x, y)
-
-    r_x = []
-    r_y = []
-    for pt in result[0]:
-        r_x.append(pt[0])
-        r_y.append(pt[1])
-
-    plt.scatter(r_x, r_y, c='red')
-    plt.draw()
-
-    plt.figure()
-    plt.plot(result[1])
-    plt.show()'''
+    # data1 = [(random.uniform(0, 1), random.uniform(0, 1)) for i in range(50)]
+    # data2 = [(random.uniform(3, 4), random.uniform(4, 5)) for i in range(50)]
+    # data = data1 + data2
+    #
+    # result = PSO.pso(10, 2, 0.75, 0.75, 1.2, 100, data)
+    #
+    # x = []
+    # y = []
+    # for pt in data:
+    #     x.append(pt[0])
+    #     y.append(pt[1])
+    #
+    # plt.scatter(x, y)
+    #
+    # r_x = []
+    # r_y = []
+    # for pt in result:
+    #     r_x.append(pt[0])
+    #     r_y.append(pt[1])
+    #
+    # plt.scatter(r_x, r_y, c='red')
+    # plt.draw()
+    #
+    # # plt.figure()
+    # # plt.plot(result[1])
+    # plt.show()
 
 
     # score_list = [score_funcs.score_1, score_funcs.score_2]

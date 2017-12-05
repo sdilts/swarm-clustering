@@ -14,7 +14,7 @@ class Particle:
         self.c2 = c2                        # Social acceleration coefficient
         self.c1 = c1                        # Cognitive acceleration coefficient
         self.w = w                          # Inertia coefficient
-        self.k = k                          # Number of clusters to find
+        self.k = k                          # Number of centroids
         self.position = []                  # A particle position is a list of centroid vectors
         self.velocity = []                  # Initialize velocity vector to 0
         self.fitness_val = sys.maxsize      # Track current fitness of the particle
@@ -24,7 +24,7 @@ class Particle:
             rand_index = random.randint(0, len(data) - 1)
             centroid = np.array(data[rand_index])
             self.position.append(np.array(centroid))
-            self.velocity.append(np.zeros(len(centroid)))
+            self.velocity.append(np.ones(len(centroid)) * random.uniform(0, 1))
 
         # Initialize personal best to initial position
         self.personal_best = self.position
@@ -80,17 +80,22 @@ class Particle:
             cluster_label = dist_to_cluster.index(min(dist_to_cluster))
             cluster_assignments[cluster_label].append(pt)
 
+        # Calculate centroids of the assigned clusters
+        mean = {}
+        for key in cluster_assignments.keys():
+            mean[key] = (np.mean(cluster_assignments[key], axis=0))
+
         # Evaluate fitness
         total = 0
         for key in cluster_assignments.keys():
             cluster_sum = 0
             for data_pt in cluster_assignments[key]:
                 # Add the distance between the data pt and current cluster centroid
-                cluster_sum += Particle.distance(data_pt, position[key])/len(cluster_assignments[key])
+                cluster_sum += Particle.distance(data_pt, mean[key])**2 #/len(cluster_assignments[key])
 
             total += cluster_sum
 
-        return total/self.k
+        return total # /len(cluster_assignments.keys())
 
     @staticmethod
     def distance(vec1, vec2):

@@ -23,7 +23,7 @@ def _single_cluster_sse(cluster, centroid):
 
     for point in cluster:
 
-        #Calculate dist(cluster, point)^2
+        # Calculate dist(cluster, point)^2
         squared_error = (np.linalg.norm(centroid - point))**2
         sse += squared_error
 
@@ -99,7 +99,7 @@ def _calculate_centroids(clusters):
 
         centroid = np.mean(cluster, axis=0)
         centroids[i] = centroid
-
+    print("score centroids are: %s\n" % str(centroids))
     return centroids
 
 

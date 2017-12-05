@@ -2,6 +2,8 @@ import random
 import numpy as np
 from collections import defaultdict
 import sys
+import Analyze
+import score_funcs
 
 '''The Particle class contains the main functionality for the PSO algorithm, including fitness evaluation
    velocity updates, and position updates'''

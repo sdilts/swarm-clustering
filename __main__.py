@@ -64,12 +64,12 @@ class build_GA_Menu(Frame):
         if self.alg_selection.get() == "K-Means":
             Analyze.analyze(data, self.data_selection.get(), 10, self.build_kMeans_func(2), score_list)
         elif self.alg_selection.get() == "DBSCAN":
-            #DBSCAN.parameter_selection(4, data)
+            # DBSCAN.parameter_selection(4, data)
             Analyze.analyze(data, self.data_selection.get(), 10, self.build_dbscan_func(0.5, 4), score_list)
         elif self.alg_selection.get() == "Competitive Learning":
             Analyze.analyze(data, self.data_selection.get(), 10, self.build_cl_func(0.1, 3, 100), score_list)
         elif self.alg_selection.get() == "PSO":
-            Analyze.analyze(data, self.data_selection.get(), 10, self.build_pso_function(10, 3, 0.72, 1.5, 1.3, 100))
+            Analyze.analyze(data, self.data_selection.get(), 5, self.build_pso_function(10, 3, 0.72, 1.5, 1.3, 100), score_list)
 
     # pass the build function the arguments to the function
     def build_kMeans_func(self, k):
@@ -111,10 +111,10 @@ class build_GA_Menu(Frame):
         params = locals()
 
         def run_function(dataset, score_funcs):
-            return PSO.PSO(num_particles, num_centroids, inertia, accel_1, accel_2, max_iter, dataset, score_funcs=score_funcs)
+            return PSO.pso(num_particles, num_centroids, inertia, accel_1, accel_2, max_iter, dataset, score_funcs=score_funcs)
 
         run_function.params = params
-        run_function.alg_name == "PSO"
+        run_function.alg_name = "PSO"
         return run_function
 
 if __name__ == '__main__':

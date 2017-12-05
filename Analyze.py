@@ -4,19 +4,22 @@ import pandas as pd
 import time
 import DelayedKeyboardInterrupt as dk
 
+
 def _create_output_folder(dataset_name, alg_name):
     """Returns the folder where the output files should be saved.
     """
     user = getpass.getuser()
-    time_start = time.strftime("%m_%d_%H:%M.%S")
+    time_start = time.strftime("%m_%d_%H_%M_%S")
 
+    # cur_dir = os.path.dirname(os.path.dirname(__file__))
+    # folder_dir = os.path.join(cur_dir, "outputs")
     folder_dir = os.path.abspath("./outputs")
 
     # Make output directory
     try:
         os.makedirs(folder_dir)
         print("Output directory created at",
-              os.path.relpath(folder_dir,os.path.dirname(os.path.abspath(__file__))))
+              os.path.relpath(folder_dir, os.path.dirname(os.path.abspath(__file__))))
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
@@ -26,7 +29,7 @@ def _create_output_folder(dataset_name, alg_name):
 
     if os.path.exists(output_dir):
         print("WARNING: Output folder already exists. Saving in backup location. The next time this error occurs, this location will be overwritten")
-        output_folder = os.path.join(folder_dir, "backup_dir")
+        output_file = os.path.join(folder_dir, "backup_dir")
     else:
         # Make output for this run:
         try:
@@ -37,6 +40,7 @@ def _create_output_folder(dataset_name, alg_name):
             if e.errno != errno.EEXIST:
                 raise
     return output_dir
+
 
 def _save_run_info(save_loc, alg_func, score_funcs, dataset):
     """Extracts the metadata from the given parameters and saves them to a file
@@ -53,6 +57,7 @@ def _save_run_info(save_loc, alg_func, score_funcs, dataset):
             file.write("\t" + key + ": " + str(alg_func.params[key]))
         file.write("\n")
 
+
 def _compute_statistics(data_frame):
     stats = dict()
     stats["stdev"] = data_frame.std()
@@ -60,6 +65,7 @@ def _compute_statistics(data_frame):
     stats["max"] = data_frame.max()
     stats["min"] = data_frame.min()
     return pd.DataFrame(stats)
+
 
 def _save_run_data(save_loc,final_states, iteration_results):
     print("\nSaving Data\n-----------------------")
@@ -92,7 +98,7 @@ def _save_run_data(save_loc,final_states, iteration_results):
         print("Iteration data same as final data. Not saving.")
 
 
-def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
+def analyze(dataset, dataset_name, repeat, alg_func, score_funcs):
     save_loc = _create_output_folder(dataset_name, alg_func.alg_name)
     _save_run_info(save_loc, alg_func, score_funcs, dataset_name)
     iteration_results = []
@@ -114,6 +120,7 @@ def analyze(dataset, dataset_name, repeat,alg_func, score_funcs):
         _save_run_data(save_loc, final_states,iteration_results)
 
     print("\nAll finished.\nHave a nice day!\n")
+
 
 def analyze_clusters(clusters, score_fns):
     """Analyzes the cluster based on the score functions given.

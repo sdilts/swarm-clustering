@@ -1,7 +1,8 @@
 import numpy as np
 import Layer
-import Analyze
 import collections
+import score_funcs
+import Analyze
 
 '''This module contains the functionality for the competitive learning clustering algorithm.'''
 
@@ -71,10 +72,25 @@ def _cluster (data_set, weight_layer):
 
 if __name__ == '__main__':
     
-    data = [[5.6, 0.15, 4.9], [4.7, 0.12, 5.75], [0.22, 3.1, 0.007], [.35, 4.01, 0.23], [43.5, 6.7, 0.1], [51.2, 7.1, 0.25]]
-    c = competitive_learning(data, 0.1, 3, 200)
+    scores = [score_funcs.cluster_sse]
+    #data = [[5.6, 0.15, 4.9], [4.7, 0.12, 5.75], [0.22, 3.1, 0.007], [.35, 4.01, 0.23], [43.5, 6.7, 0.1], [51.2, 7.1, 0.25]]
+    
+    file = open("iris.data", "r")
+    data_lines = file.readlines()
+    data = []
+    for line in data_lines:
+        
+        data_line = line.split(",")[0:4]
+        if len(data_line) > 2:
+            data.append(data_line)
 
-    #print (c)
+    for i in range(len(data)):
+        for j in range(len(data[i])):
+            data[i][j] = float(data[i][j])
 
-    for item, val in c.items():
-        print (str(item) + ": " + str(val))
+
+    c = competitive_learning(data_set = data, eta = 0.1, num_clusters = 3,
+    iterations = 100, score_funcs = scores)
+
+    for thing in c:
+        print(thing["Cluster SSE"])

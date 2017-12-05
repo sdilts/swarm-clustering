@@ -1,20 +1,21 @@
 import Particle
 import sys
 
+'''This module contains the functionality to run the particle swarm optimization algorithm'''
+
 
 def PSO(num_particles, k, w, c1, c2, max_iter, convergence_criteria, data):
-    swarm = []
-    global_best = []
-    global_fitness = sys.maxsize
-    g_fit = []
+    swarm = []                       # List to hold particles of the swarm
+    global_best = []                 # Global best position
+    global_fitness = sys.maxsize     # Fitness value of the global best position
+    g_fit = []                       # Fitness history of the global best position
 
     # Create particle swarm and initialize global best position
     for i in range(num_particles):
         cur_particle = Particle.Particle(k, w, c1, c2, data)
         swarm.append(cur_particle)
 
-        # print(cur_particle.position)
-        # print(type(cur_particle))
+        # As new particles are created update the global best position
         particle_fitness = cur_particle.fitness(data, cur_particle.position)
         if particle_fitness < global_fitness:
             global_best = cur_particle.position
@@ -27,14 +28,15 @@ def PSO(num_particles, k, w, c1, c2, max_iter, convergence_criteria, data):
     # Run particle swarm
     for i in range(max_iter):
         print("iteration: %s" % i)
-        # print("global best: %s, fitness: %s\n" % (str(global_best), global_fitness))
+
+        # Update global fitness if a particle local fitness is better
         for particle in swarm:
             if particle.fitness_val < global_fitness:
-                # print("Particle position: %s, Particle fitness: %s" % (str(particle.position), str(particle.fitness_val)))
                 global_best = particle.position
                 global_fitness = particle.fitness_val
         g_fit.append(global_fitness)
 
+        # Update the positions and velocities of the particle
         for particle in swarm:
             particle.update_particle(global_best, data)
 

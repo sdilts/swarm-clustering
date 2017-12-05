@@ -2,10 +2,13 @@ import Analyze
 import score_funcs
 import KMeans
 import DBSCAN
+import CompetitiveLearning
+import PSO
 import os
 import random
 from tkinter import *
 from tkinter import ttk
+import matplotlib.pyplot as plt
 
 
 class build_GA_Menu(Frame):
@@ -71,10 +74,48 @@ class build_GA_Menu(Frame):
         run_function.alg_name = "DBSCAN"
         return run_function
 
+    def build_cl_function(eta, num_clusters, iterations):
+        params = locals()
+
+        def run_function(dataset, score_funcs):
+            return CompetitiveLearning.competitive_learning(dataset, eta, num_clusters, iterations, score_funcs)
+
+        run_function.params = params
+        run_function.alg_name = "Competitive Learning"
+        return run_function
+
 if __name__ == '__main__':
-    root = Tk()
-    app = build_GA_Menu(root)
-    root.mainloop()
+    # root = Tk()
+    # app = build_GA_Menu(root)
+    # root.mainloop()
+
+    data1 = [(random.uniform(0, 1), random.uniform(0, 1)) for i in range(50)]
+    data2 = [(random.uniform(3, 4), random.uniform(4, 5)) for i in range(50)]
+    data = data1 + data2
+
+    result = PSO.PSO(10, 2, 0.75, 0.75, 1.2, 100, 0.001, data)
+
+    x = []
+    y = []
+    for pt in data:
+        x.append(pt[0])
+        y.append(pt[1])
+
+    plt.scatter(x, y)
+
+    r_x = []
+    r_y = []
+    for pt in result[0]:
+        r_x.append(pt[0])
+        r_y.append(pt[1])
+
+    plt.scatter(r_x, r_y, c='red')
+    plt.draw()
+
+    plt.figure()
+    plt.plot(result[1])
+    plt.show()
+
 
     # score_list = [score_funcs.score_1, score_funcs.score_2]
     # dataset = [(1,1), (2,2), (10,10), (11,11)]

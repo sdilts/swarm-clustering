@@ -6,7 +6,7 @@ from operator import itemgetter
 
 '''This module contains the functionality for the Ant Colony Optimization Clustering algorithm.'''
 
-def ACO(dataset, iterations, num_clusters, num_ants, beta, score_funcs, prob_cutoff, num_elite_ants):
+def ACO(dataset, iterations, num_clusters, num_ants, beta, prob_cutoff, num_elite_ants, decay_rate, q):
     ''' The main function for the ACO algorithm. Takes in the dataset to be clustered, 
         maximum number of iterations, the number of ants to be included, and the score
         functions to be used. Creates individual ants, tracks the pheromone matrix,
@@ -18,7 +18,7 @@ def ACO(dataset, iterations, num_clusters, num_ants, beta, score_funcs, prob_cut
     best_clustering = None
     results = []
 
-    _print_ant_info(ants)
+    #_print_ant_info(ants)
 
     for iteration in range(iterations):
 
@@ -36,7 +36,7 @@ def ACO(dataset, iterations, num_clusters, num_ants, beta, score_funcs, prob_cut
         ants = [ranked_ant[0] for ranked_ant in rank_info.ants_and_scores]
         
         #Let the elite (best scoring) ants update the pheromone matrix, then update ants' matrices
-        pheromone_matrix = _update_pheromones(pheromone_matrix, ants[0:num_elite_ants])
+        pheromone_matrix = _update_pheromones(pheromone_matrix, ants[0:num_elite_ants], decay_rate, q)
         _update_ants_pheromones(pheromone_matrix, ants)
 
         iteration_best_score = rank_info.best_score
@@ -50,14 +50,14 @@ def ACO(dataset, iterations, num_clusters, num_ants, beta, score_funcs, prob_cut
         #Reset the ants' memory lists
         _reset_ants(ants)
 
-        _print_ant_info(ants)
-        print ("Best score this iteration: " + str(iteration_best_score))
+        #_print_ant_info(ants)
+        print ("Best score so far: " + str(best_score))
 
     print ("------------------------------------------")
     print ("")
     print ("Best score: " + str(best_score))
-    print ("Best cluster: ")
-    print (best_clustering)
+    #print ("Best cluster: ")
+    #print (best_clustering)
 
     return results
 
@@ -119,10 +119,28 @@ def _rank_ants(ants):
     return return_info
     
 
-def _update_pheromones(pheromones, ants):
-    ''' Update the pheromone matrix based on the newly ranked ants. '''
+def _update_pheromones(pheromones, ants, decay_rate, q):
+    ''' Update the pheromone matrix based on the newly ranked ants
+        using the ant quantity system pheromone update. '''
     
-    return pheromones
+    updated_pheromones = []
+
+    #Decay the existing pheromones
+    for i in range(len(pheromones)):
+        updated_pheromones.append(np.multiply(pheromones[i], decay_rate))
+
+    #Add the new pheromones from elite ants
+    for ant in ants:
+
+        for i, data_point in enumerate(ant.dataset):
+
+            for j, centroid in enumerate(ant.centroids):
+
+                dist = np.linalg.norm(np.array(centroid) - np.array(data_point))
+                pheromone_delta = q/dist
+                updated_pheromones[j][i] += pheromone_delta
+
+    return updated_pheromones
 
 def _update_ants_pheromones(pheromones, ants):
     ''' Update each individual ant's pheromone matrix. '''
@@ -142,6 +160,23 @@ def _print_ant_info(ants):
 
 if __name__ == '__main__':
 
-    scores = [score_funcs.cluster_sse]
-    data = [[15, 26, 13], [.023, .222, .999], [13, 22, 16], [.015, .322, .897]]
-    ACO(data, iterations = 3, num_clusters = 2, num_ants = 2, beta = 0.5, score_funcs = scores, prob_cutoff = 0.75, num_elite_ants = 1)
+    #scores = [score_funcs.cluster_sse]
+    #data = [[15, 26, 13], [.023, .222, .999], [13, 22, 16], [.015, .322, .897]]
+    #ACO(data, iterations = 15, num_clusters = 2, num_ants = 2, beta = 0.5, prob_cutoff = 0.75, num_elite_ants = 1)
+
+    file = open("iris.data", "r")
+    data_lines = file.readlines()
+    data = []
+    for line in data_lines:
+        
+        data_line = line.split(",")[0:4]
+        if len(data_line) > 2:
+            data.append(data_line)
+
+    for i in range(len(data)):
+        for j in range(len(data[i])):
+            data[i][j] = float(data[i][j])
+
+
+    ACO(data, iterations = 100, num_clusters = 3, num_ants = 8, beta = 0.5, 
+        prob_cutoff = 0.75, num_elite_ants = 3, decay_rate = .75, q = 1)

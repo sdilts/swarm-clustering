@@ -64,9 +64,10 @@ class build_GA_Menu(Frame):
         if self.alg_selection.get() == "K-Means":
             Analyze.analyze(data, self.data_selection.get(), 10, self.build_kMeans_func(2), score_list)
         elif self.alg_selection.get() == "DBSCAN":
-            Analyze.analyze(data, self.data_selection.get(), 10, self.build_dbscan_func(10, 4), score_list)
+            #DBSCAN.parameter_selection(4, data)
+            Analyze.analyze(data, self.data_selection.get(), 10, self.build_dbscan_func(0.5, 4), score_list)
         elif self.alg_selection.get() == "Competitive Learning":
-            Analyze.analyze(data, self.data_selection.get(), 10, self.build_cl_func(0.5, 3, 10), score_list)
+            Analyze.analyze(data, self.data_selection.get(), 10, self.build_cl_func(0.1, 3, 100), score_list)
         elif self.alg_selection.get() == "PSO":
             Analyze.analyze(data, self.data_selection.get(), 10, self.build_pso_function(10, 3, 0.72, 1.5, 1.3, 100))
 

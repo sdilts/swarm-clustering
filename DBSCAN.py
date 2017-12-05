@@ -36,12 +36,9 @@ def core_point(index, all_points, radius, minpts):
 
 def _cluster(data_points, radius, minpts):
     # Calculate which pts are core using multiple processes for speed
-    t0 = time.time()
     pool = mp.Pool(processes=4)
     results = [pool.apply_async(core_point, args=(x, data_points, radius, minpts)) for x in range(len(data_points))]
     core_pts = [p.get() for p in results]
-    t1 = time.time()
-    print("Pool Time %s: " % (t1-t0))
 
     # Add core pts to a dictionary for fast membership check, with point as key, and neighbors as values
     core_set = {}

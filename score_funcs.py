@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def cluster_sse(clusters):
     ''' The cluster SSE evaluation method. This method calculates the summed
         squared error, measured by the distance between the centroid of each

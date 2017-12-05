@@ -16,12 +16,12 @@ def normalize(df):
 
 def load_iris():
     path = os.path.realpath("data/iris.data")
-    df = pd.read_csv(path, sep=',',names=['sl','sw','pl','pw','class'], dtype={'sl': np.float64, 'sw' : np.float64,'pl':np.float64,'pw':np.float64, 'class' : str})
-    val_list = ['sl', 'sw', 'pl','pw']
+    df = pd.read_csv(path, sep=',',names=['sl','sw','pl','pw','class'], dtype={'sl': np.float64, 'sw': np.float64, 'pl': np.float64,'pw': np.float64, 'class': str})
+    val_list = ['sl', 'sw', 'pl', 'pw']
     df_vals = df[val_list]
-    df_norm = (df_vals - df_vals.mean()) / (df_vals.max() - df_vals.min())
+    #df_norm = (df_vals - df_vals.mean()) / (df_vals.max() - df_vals.min())
     # df_norm['class'] = df['class']
-    return to_tuples(df_norm, val_list)
+    return to_tuples(df_vals, val_list)
 
 
 def load_cust_data():

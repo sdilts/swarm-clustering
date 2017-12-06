@@ -53,5 +53,5 @@ def load_banknote():
     path = os.path.realpath("data/data_banknote_authentication.txt")
     val_list = ['var','skew','curt','entropy','class']
     df = pd.read_csv(path,sep=',',names=val_list)
-    df_norm = normalize(df[val_list[:-1]])
-    return to_tuples(df_norm, val_list[:-1])
+    df_vals = df[val_list]
+    return to_tuples(df_vals, val_list[:-1])

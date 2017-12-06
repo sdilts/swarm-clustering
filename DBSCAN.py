@@ -5,7 +5,7 @@ from collections import deque
 from collections import defaultdict
 import time
 import random
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 '''This module contains the functionality for the DBSCAN clustering algorithm.'''
 

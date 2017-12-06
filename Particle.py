@@ -31,17 +31,18 @@ class Particle:
 
     # Method to update particle position, velocity, and personal best
     def update_particle(self, global_best, data):
-        personal_best_fitness = self.fitness(data, self.personal_best)
+        personal_best_fitness = self.fitness(data)
+
+        self.update_velocity(global_best)
+        self.update_position()
 
         # If the fitness of the updated position is better than the personal best fitness, update the personal best
-        cur_fitness = self.fitness(data, self.position)
+        cur_fitness = self.fitness(data)
         self.fitness_val = cur_fitness
 
         if cur_fitness < personal_best_fitness:
             self.personal_best = self.position
 
-        self.update_velocity(global_best)
-        self.update_position()
 
     # Method to update particle velocity
     def update_velocity(self, global_best):
@@ -68,7 +69,7 @@ class Particle:
         self.position = [self.position[i] + self.velocity[i] for i in range(len(self.position))]
 
     # Method to assess the fitness of a particle
-    def fitness(self, data, position):
+    def fitness(self, data):
         # Assign points to a cluster
         cluster_assignments = defaultdict(list)
         for pt in data:

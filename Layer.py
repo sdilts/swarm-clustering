@@ -16,7 +16,7 @@ class Layer:
             
             new_weights = np.random.uniform(-0.2, 0.2, size=num_inputs) # Randomize the weights
 
-            #Normalize the weights
+            # Normalize the weights
             scaler = Normalizer().fit(new_weights.reshape(1, -1))
             normalized_weights = scaler.transform(new_weights.reshape(1, -1))
             self.weights.append(normalized_weights[0])

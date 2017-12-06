@@ -9,7 +9,7 @@ import os
 import random
 from tkinter import *
 from tkinter import ttk
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 
 class build_GA_Menu(Frame):

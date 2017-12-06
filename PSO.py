@@ -4,7 +4,7 @@ import sys
 import os
 import numpy as np
 from collections import defaultdict
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 '''This module contains the functionality to run the particle swarm optimization algorithm'''
 

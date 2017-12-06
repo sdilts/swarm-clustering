@@ -11,6 +11,10 @@ from tkinter import *
 from tkinter import ttk
 # import matplotlib.pyplot as plt
 
+# Don't know where else to put this, but I feel like it should go somewhere in here:
+# only argument to kmeans is the number of clusters
+# TODO: find number of clusters for customer dataset
+kMeans_params = { "Iris" : [3], "Glass" : [7], "Banknote" : [2], "Seeds" : [3], "Customer" : [3]}
 
 class build_GA_Menu(Frame):
     def __init__(self, master=None):
@@ -47,30 +51,31 @@ class build_GA_Menu(Frame):
 
     def run(self):
         # First the selected dataset needs to be loaded
-        if self.data_selection.get() == "Iris":
+        dataset_name = self.data_selection.get()
+        if dataset_name == "Iris":
             print ("Selecting Iris!")
             data = load_data.load_iris()
-        elif self.data_selection.get() == "Seeds":
+        elif dataset_name == "Seeds":
             data = load_data.load_seeds()
-        elif self.data_selection.get() == "Glass":
+        elif dataset_name == "Glass":
             data = load_data.load_glass()
-        elif self.data_selection.get() == "Banknote":
+        elif dataset_name == "Banknote":
             data = load_data.load_banknote()
-        elif self.data_selection.get() == "Customers":
+        elif dataset_name == "Customers":
             data = load_data.load_cust_data()
 
         # Now run the selected clustering algorithm
         score_list = [score_funcs.cluster_sse]
         if self.alg_selection.get() == "K-Means":
-            Analyze.analyze(data, self.data_selection.get(), 10, self.build_kMeans_func(2), score_list)
+            Analyze.analyze(data, dataset_name, 10, self.build_kMeans_func(*kMeans_params[dataset_name]), score_list)
         elif self.alg_selection.get() == "DBSCAN":
             # Iris params: 0.5, 4
             # DBSCAN.parameter_selection(4, data)
-            Analyze.analyze(data, self.data_selection.get(), 10, self.build_dbscan_func(0.5, 4), score_list)
+            Analyze.analyze(data, dataset_name, 10, self.build_dbscan_func(0.5, 4), score_list)
         elif self.alg_selection.get() == "Competitive Learning":
-            Analyze.analyze(data, self.data_selection.get(), 10, self.build_cl_func(0.1, 3, 100), score_list)
+            Analyze.analyze(data, dataset_name, 10, self.build_cl_func(0.1, 3, 100), score_list)
         elif self.alg_selection.get() == "PSO":
-            Analyze.analyze(data, self.data_selection.get(), 5, self.build_pso_function(5, 3, 0.8, 1.5, 1.3, 100), score_list)
+            Analyze.analyze(data, dataset_name, 5, self.build_pso_function(5, 3, 0.8, 1.5, 1.3, 100), score_list)
 
     # pass the build function the arguments to the function
     def build_kMeans_func(self, k):

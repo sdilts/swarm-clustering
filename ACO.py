@@ -1,12 +1,13 @@
 import score_funcs
 import numpy as np
 import Ant
+import Analyze
 import collections
 from operator import itemgetter
 
 '''This module contains the functionality for the Ant Colony Optimization Clustering algorithm.'''
 
-def ACO(dataset, iterations, num_clusters, num_ants, beta, prob_cutoff, num_elite_ants, decay_rate, q):
+def ACO(dataset, iterations, num_clusters, num_ants, beta, prob_cutoff, num_elite_ants, decay_rate, q, score_funcs):
     ''' The main function for the ACO algorithm. Takes in the dataset to be clustered, 
         maximum number of iterations, the number of ants to be included, and the score
         functions to be used. Creates individual ants, tracks the pheromone matrix,
@@ -41,7 +42,7 @@ def ACO(dataset, iterations, num_clusters, num_ants, beta, prob_cutoff, num_elit
 
         iteration_best_score = rank_info.best_score
         iteration_best_clustering = rank_info.best_clustering
-        results.append(iteration_best_score)
+        #results.append(iteration_best_score)
 
         if iteration_best_score < best_score:
             best_score = iteration_best_score
@@ -50,14 +51,9 @@ def ACO(dataset, iterations, num_clusters, num_ants, beta, prob_cutoff, num_elit
         #Reset the ants' memory lists
         _reset_ants(ants)
 
-        #_print_ant_info(ants)
-        print ("Best score so far: " + str(best_score))
-
-    print ("------------------------------------------")
-    print ("")
-    print ("Best score: " + str(best_score))
-    #print ("Best cluster: ")
-    #print (best_clustering)
+        result = Analyze.analyze_clusters(best_clustering, score_funcs)
+        # print("In CL result: %s" % str(result))
+        results.append(result)
 
     return results
 
@@ -160,7 +156,7 @@ def _print_ant_info(ants):
 
 if __name__ == '__main__':
 
-    #scores = [score_funcs.cluster_sse]
+    scores = [score_funcs.cluster_sse]
     #data = [[15, 26, 13], [.023, .222, .999], [13, 22, 16], [.015, .322, .897]]
     #ACO(data, iterations = 15, num_clusters = 2, num_ants = 2, beta = 0.5, prob_cutoff = 0.75, num_elite_ants = 1)
 
@@ -178,5 +174,7 @@ if __name__ == '__main__':
             data[i][j] = float(data[i][j])
 
 
-    ACO(data, iterations = 100, num_clusters = 3, num_ants = 8, beta = 0.5, 
-        prob_cutoff = 0.75, num_elite_ants = 3, decay_rate = .75, q = 1)
+    results = ACO(data, iterations = 10, num_clusters = 3, num_ants = 8, beta = 0.5, 
+        prob_cutoff = 0.75, num_elite_ants = 3, decay_rate = .75, q = 1, score_funcs = scores)
+    for result in results:
+        print(result)    

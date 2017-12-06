@@ -14,7 +14,35 @@ import matplotlib.pyplot as plt
 # Don't know where else to put this, but I feel like it should go somewhere in here:
 # only argument to kmeans is the number of clusters
 # TODO: find number of clusters for customer dataset
-kMeans_params = { "Iris" : [3], "Glass" : [7], "Banknote" : [2], "Seeds" : [3], "Customer" : [3]}
+kMeans_params = { "Iris" : [3],
+                  "Glass" : [7],
+                  "Banknote" : [2],
+                  "Seeds" : [3],
+                  "Customer" : [5]}
+# num clusters, num ants, beta, prob cutoff, num elite, decay rate, q
+aco_params = { "Iris" : [3],
+               "Glass" : [7],
+               "Banknote" : [2],
+               "Seeds" : [3],
+               "Customer" : [5]}
+# num_particles, k, w, c1, c2, max_iter
+pso_params = { "Iris" : [5, 3, 0.8, 1.5, 1.3, 100],
+               "Glass" : [7],
+               "Banknote" : [2],
+               "Seeds" : [3],
+               "Customer" : [5]}
+# eta, num_clusters, iterations
+cl_params = { "Iris" : [0.1, 3, 100],
+              "Glass" : [7],
+              "Banknote" : [2],
+              "Seeds" : [3],
+              "Customer" : [5]}
+# radius, minpts
+dbscan_params = { "Iris" : [3],
+                  "Glass" : [7],
+                  "Banknote" : [2],
+                  "Seeds" : [3],
+                  "Customer" : [5]}
 
 class build_GA_Menu(Frame):
     def __init__(self, master=None):
@@ -71,11 +99,11 @@ class build_GA_Menu(Frame):
         elif self.alg_selection.get() == "DBSCAN":
             # Iris params: 0.5, 4
             # DBSCAN.parameter_selection(4, data)
-            Analyze.analyze(data, dataset_name, 10, self.build_dbscan_func(0.5, 4), score_list)
+            Analyze.analyze(data, dataset_name, 10, self.build_dbscan_func(*dbscan_params[dataset_name]), score_list)
         elif self.alg_selection.get() == "Competitive Learning":
-            Analyze.analyze(data, dataset_name, 10, self.build_cl_func(0.1, 3, 100), score_list)
+            Analyze.analyze(data, dataset_name, 10, self.build_cl_func(*cl_params[dataset_name]), score_list)
         elif self.alg_selection.get() == "PSO":
-            Analyze.analyze(data, dataset_name, 5, self.build_pso_function(5, 3, 0.8, 1.5, 1.3, 100), score_list)
+            Analyze.analyze(data, dataset_name, 5, self.build_pso_function(*pso_params[dataset_name]), score_list)
 
     # pass the build function the arguments to the function
     def build_kMeans_func(self, k):

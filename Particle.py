@@ -22,6 +22,8 @@ class Particle:
             rand_index = random.randint(0, len(data) - 1)
             centroid = np.array(data[rand_index])
             self.position.append(np.array(centroid))
+
+            # Initialize velocities with random values between 0 and 1
             self.velocity.append(np.ones(len(centroid)) * random.uniform(0, 1))
 
         # Initialize personal best to initial position
@@ -52,19 +54,22 @@ class Particle:
         # Calculate difference between global best and current position
         global_comp = [global_best[i] - self.position[i] for i in range(self.k)]
 
+        # Update particle velocity
         for i in range(len(self.velocity)):
             self.velocity[i] = self.w * self.velocity[i] + self.c1 * phi_1 * local_comp[i] + self.c2 * phi_2 * global_comp[i]
 
     # Method to update particle position
     def update_position(self):
+        # New position = old position + velocity
         self.position = [self.position[i] + self.velocity[i] for i in range(len(self.position))]
 
-    # Method to assess the fitness of a particle
+    # Method to assess the fitness of a particle, fitness is equal to the sse score of the clusters
     def fitness(self, data):
         # Assign points to a cluster
         cluster_assignments = defaultdict(list)
         for pt in data:
             pt = np.array(pt)
+
             # Calculate distance to each centroid in the cluster
             dist_to_cluster = [Particle.distance(pt, k) for k in self.position]
 
@@ -72,7 +77,7 @@ class Particle:
             cluster_label = dist_to_cluster.index(min(dist_to_cluster))
             cluster_assignments[cluster_label].append(pt)
 
-        # Calculate centroids of the assigned clusters
+        # Calculate true centroids of the assigned clusters
         mean = {}
         for key in cluster_assignments.keys():
             mean[key] = (np.mean(cluster_assignments[key], axis=0))

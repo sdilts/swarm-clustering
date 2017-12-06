@@ -107,34 +107,16 @@ def load_data(file_name):
     return cluster
 
 
-# Plot the clusters
+# Run the DBSCAN algorithm and return the final scored results
 def dbscan(data_pts, radius, minpts, score_funcs=None):
+    # labels is a dictionary with points as keys and values as the cluster label
     labels = _cluster(data_pts, radius, minpts)
 
+    # Assign points to cluster making labels keys and values list of points belonging to individual clusters
     clusters = defaultdict(list)
     for key, label in labels.items():
         clusters[label].append(key)
 
     result = [Analyze.analyze_clusters(clusters, score_funcs)]
-
-    # cluster_color = {}
-    # c = ['r', 'b', 'g', 'y', 'c', 'b']
-    # x = []
-    # y = []
-    # color = []
-    # for key, cluster in labels.items():
-    #     if cluster is not "unknown":
-    #         x.append(key[0])
-    #         y.append(key[1])
-    #
-    #         if cluster not in cluster_color:
-    #             cur = c.pop(0)
-    #             cluster_color[cluster] = cur
-    #             c.append(cur)
-    #
-    #         color.append(cluster_color[cluster])
-    #
-    # plt.scatter(x, y, c=color)
-    # plt.show()
 
     return result

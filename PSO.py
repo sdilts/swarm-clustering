@@ -1,10 +1,8 @@
 import Particle
 import Analyze
 import sys
-import os
 import numpy as np
 from collections import defaultdict
-# import matplotlib.pyplot as plt
 
 '''This module contains the functionality to run the particle swarm optimization algorithm'''
 
@@ -21,21 +19,17 @@ def pso(num_particles, k, w, c1, c2, max_iter, data, score_funcs=None):
         swarm.append(cur_particle)
 
         # As new particles are created update the global best position
-        particle_fitness = cur_particle.fitness(data, cur_particle.position)
+        particle_fitness = cur_particle.fitness(data)
         if particle_fitness < global_fitness:
             global_best = cur_particle.position
             global_fitness = particle_fitness
 
         g_fit.append(global_fitness)
 
-    # print("init global best: %s, fitness: %s" % (str(global_best), str(global_fitness)))
-
     # Run particle swarm
     results_list = []
     for i in range(max_iter):
         # print("iteration: %s" % i)
-
-        # print("init global best: %s" % (str(global_best)))
 
         # Update global fitness if a particle local fitness is better
         for particle in swarm:
@@ -51,9 +45,6 @@ def pso(num_particles, k, w, c1, c2, max_iter, data, score_funcs=None):
         for particle in swarm:
             particle.update_particle(global_best, data)
 
-    # return global_best, g_fit
-    # plt.plot(g_fit)
-    # plt.show()
     return g_fit
 
 

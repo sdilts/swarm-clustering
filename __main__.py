@@ -5,22 +5,18 @@ import DBSCAN
 import CompetitiveLearning
 import PSO
 import load_data
-import os
-import random
 from tkinter import *
-from tkinter import ttk
-# import matplotlib.pyplot as plt
 
 # Don't know where else to put this, but I feel like it should go somewhere in here:
 # only argument to kmeans is the number of clusters
 # TODO: find number of clusters for customer dataset
 kMeans_params = { "Iris" : [3], "Glass" : [7], "Banknote" : [2], "Seeds" : [3], "Customer" : [3]}
 
+
 class build_GA_Menu(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.master = master
-        #self.init_gui()
 
         self.master.title("Clustering Analysis")
         self.pack(fill=BOTH, expand=1)
@@ -82,7 +78,7 @@ class build_GA_Menu(Frame):
         # get the arguments:
         params = locals()
 
-        # example for running an anaylisis of the k-NN algorithm
+        # example for running an anaylisis of the k-means algorithm
         # Might add another class to make this less messy, but the
         # ICluster interface must also define a dictionary called params, which are
         # the parameters that are passed into the algorithm function:
@@ -124,7 +120,6 @@ class build_GA_Menu(Frame):
         return run_function
 
 if __name__ == '__main__':
-    # Analyze.analyze(dataset, "test", 10, build_kMeans_func(2), score_list)
     root = Tk()
     app = build_GA_Menu(root)
     root.mainloop()

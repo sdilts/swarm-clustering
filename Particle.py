@@ -2,8 +2,6 @@ import random
 import numpy as np
 from collections import defaultdict
 import sys
-import Analyze
-import score_funcs
 
 '''The Particle class contains the main functionality for the PSO algorithm, including fitness evaluation
    velocity updates, and position updates'''
@@ -43,23 +41,16 @@ class Particle:
         if cur_fitness < personal_best_fitness:
             self.personal_best = self.position
 
-
     # Method to update particle velocity
     def update_velocity(self, global_best):
         phi_1 = random.uniform(0, 1)
         phi_2 = random.uniform(0, 1)
-
-        # print("Phi 1: %s" % phi_1)
-        # print("Phi 2: %s\n" % phi_2)
 
         # Calculate the difference  between personal best and current position
         local_comp = [self.personal_best[i] - self.position[i] for i in range(self.k)]
 
         # Calculate difference between global best and current position
         global_comp = [global_best[i] - self.position[i] for i in range(self.k)]
-
-        # print("Local comp: %s" % str(local_comp))
-        # print("Global comp: %s" % str(global_comp))
 
         for i in range(len(self.velocity)):
             self.velocity[i] = self.w * self.velocity[i] + self.c1 * phi_1 * local_comp[i] + self.c2 * phi_2 * global_comp[i]
@@ -86,17 +77,17 @@ class Particle:
         for key in cluster_assignments.keys():
             mean[key] = (np.mean(cluster_assignments[key], axis=0))
 
-        # Evaluate fitness
+        # Evaluate fitness using cluster sse
         total = 0
         for key in cluster_assignments.keys():
             cluster_sum = 0
             for data_pt in cluster_assignments[key]:
                 # Add the distance between the data pt and current cluster centroid
-                cluster_sum += Particle.distance(data_pt, mean[key])**2 #/len(cluster_assignments[key])
+                cluster_sum += Particle.distance(data_pt, mean[key])**2
 
             total += cluster_sum
 
-        return total # /len(cluster_assignments.keys())
+        return total
 
     @staticmethod
     def distance(vec1, vec2):

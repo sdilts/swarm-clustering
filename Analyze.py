@@ -11,8 +11,6 @@ def _create_output_folder(dataset_name, alg_name):
     user = getpass.getuser()
     time_start = time.strftime("%m_%d_%H_%M_%S")
 
-    # cur_dir = os.path.dirname(os.path.dirname(__file__))
-    # folder_dir = os.path.join(cur_dir, "outputs")
     folder_dir = os.path.abspath("./outputs")
 
     # Make output directory

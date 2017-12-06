@@ -28,7 +28,7 @@ def load_cust_data():
     path = os.path.realpath("data/whole_cust_data.csv")
     val_list = ['Channel',  'Region',  'Fresh',   'Milk',  'Grocery',  'Frozen',  'Detergents_Paper','Delicassen']
     df = pd.read_csv(path,sep=',')
-    return to_tuples(normalize(df), val_list)
+    return to_tuples(df, val_list)
 
 
 def load_glass():

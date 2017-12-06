@@ -4,6 +4,7 @@ import KMeans
 import DBSCAN
 import CompetitiveLearning
 import PSO
+import ACO
 import load_data
 from tkinter import *
 
@@ -100,6 +101,9 @@ class build_GA_Menu(Frame):
             Analyze.analyze(data, dataset_name, 10, self.build_cl_func(*cl_params[dataset_name]), score_list)
         elif self.alg_selection.get() == "PSO":
             Analyze.analyze(data, dataset_name, 5, self.build_pso_function(*pso_params[dataset_name]), score_list)
+        elif self.alg_selection.get() == "ACO":
+            Analyze.analyze(data, dataset_name, 5, self.build_aco_func(iterations = 10, num_clusters = 3, num_ants = 8, beta = 0.5, 
+        prob_cutoff = 0.75, num_elite_ants = 3, decay_rate = .75, q = 1), score_list)
 
     # pass the build function the arguments to the function
     def build_kMeans_func(self, k):
@@ -145,6 +149,16 @@ class build_GA_Menu(Frame):
 
         run_function.params = params
         run_function.alg_name = "PSO"
+        return run_function
+
+    def build_aco_func(self, iterations, num_clusters, num_ants, beta, prob_cutoff, num_elite_ants, decay_rate, q):
+        params = locals()
+
+        def run_function(dataset, score_funcs):
+            return ACO.ACO(dataset, iterations, num_clusters, num_ants, beta, prob_cutoff, num_elite_ants, decay_rate, q, score_funcs)
+
+        run_function.params = params
+        run_function.alg_name = "ACO"
         return run_function
 
 if __name__ == '__main__':

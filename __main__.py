@@ -10,7 +10,7 @@ from tkinter import *
 # Don't know where else to put this, but I feel like it should go somewhere in here:
 # only argument to kmeans is the number of clusters
 # TODO: find number of clusters for customer dataset
-kMeans_params = { "Iris" : [3], "Glass" : [7], "Banknote" : [2], "Seeds" : [3], "Customer" : [3]}
+kMeans_params = { "Iris" : [3], "Glass" : [7], "Banknote" : [2], "Seeds" : [3], "Customers" : [3]}
 
 
 class build_GA_Menu(Frame):
@@ -53,6 +53,7 @@ class build_GA_Menu(Frame):
             data = load_data.load_iris()
         elif dataset_name == "Seeds":
             data = load_data.load_seeds()
+            print(data)
         elif dataset_name == "Glass":
             data = load_data.load_glass()
         elif dataset_name == "Banknote":
@@ -67,7 +68,7 @@ class build_GA_Menu(Frame):
         elif self.alg_selection.get() == "DBSCAN":
             # Iris params: 0.5, 4
             # DBSCAN.parameter_selection(4, data)
-            Analyze.analyze(data, dataset_name, 10, self.build_dbscan_func(0.5, 4), score_list)
+            Analyze.analyze(data, dataset_name, 5, self.build_dbscan_func(0.5, 4), score_list)
         elif self.alg_selection.get() == "Competitive Learning":
             Analyze.analyze(data, dataset_name, 10, self.build_cl_func(0.1, 3, 100), score_list)
         elif self.alg_selection.get() == "PSO":

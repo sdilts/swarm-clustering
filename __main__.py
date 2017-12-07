@@ -15,35 +15,35 @@ kMeans_params = { "Iris" : [3],
                   "Glass" : [7],
                   "Banknote" : [2],
                   "Seeds" : [3],
-                  "Customer" : [5]}
+                  "Customers" : [5]}
 
 # num clusters, num ants, beta, prob cutoff, num elite, decay rate, q
 aco_params = { "Iris" : [3],
                "Glass" : [7],
                "Banknote" : [2],
                "Seeds" : [3],
-               "Customer" : [5]}
+               "Customers" : [5]}
 
 # num_particles, num centroids, inertia, accel 1, accel 2, max_iter
-pso_params = { "Iris" : [5, 3, 0.8, 1.5, 1.3, 100],
-               "Glass" : [7],
-               "Banknote" : [2],
-               "Seeds" : [3],
-               "Customer" : [5]}
+pso_params = {"Iris" : [10, 3, 0.7, 1.2, 1.3, 100],
+              "Glass" : [10, 7, 0.9, 1.3, 1.3, 100],
+              "Banknote" : [10, 2, 0.7, 0.9, 1.3, 100],
+              "Seeds" : [10, 3, 0.9, 1.2, 1.5, 100],
+              "Customers" : [10, 8, 0.75, 1.3, 1.3, 100]}
 
 # eta, num_clusters, iterations
 cl_params = { "Iris" : [0.1, 3, 100],
               "Glass" : [7],
               "Banknote" : [2],
               "Seeds" : [3],
-              "Customer" : [5]}
+              "Customers" : [5]}
 
 # radius, minpts
-dbscan_params = { "Iris" : [3],
+dbscan_params = { "Iris" : [0.6, 5],
                   "Glass" : [7],
                   "Banknote" : [2],
                   "Seeds" : [3],
-                  "Customer" : [5]}
+                  "Customers" : [5]}
 
 
 class build_GA_Menu(Frame):
@@ -99,12 +99,12 @@ class build_GA_Menu(Frame):
             Analyze.analyze(data, dataset_name, 10, self.build_kMeans_func(*kMeans_params[dataset_name]), score_list)
         elif self.alg_selection.get() == "DBSCAN":
             # Iris params: 0.5, 4
-            # DBSCAN.parameter_selection(4, data)
-            Analyze.analyze(data, dataset_name, 10, self.build_dbscan_func(*dbscan_params[dataset_name]), score_list)
+            # DBSCAN.parameter_selection(8, data)
+            Analyze.analyze(data, dataset_name, 5, self.build_dbscan_func(*dbscan_params[dataset_name]), score_list)
         elif self.alg_selection.get() == "Competitive Learning":
             Analyze.analyze(data, dataset_name, 10, self.build_cl_func(*cl_params[dataset_name]), score_list)
         elif self.alg_selection.get() == "PSO":
-            Analyze.analyze(data, dataset_name, 5, self.build_pso_function(*pso_params[dataset_name]), score_list)
+            Analyze.analyze(data, dataset_name, 10, self.build_pso_function(*pso_params[dataset_name]), score_list)
         elif self.alg_selection.get() == "ACO":
             Analyze.analyze(data, dataset_name, 5, self.build_aco_func(iterations = 10, num_clusters = 3, num_ants = 8,
                             beta = 0.5, prob_cutoff = 0.75, num_elite_ants = 3, decay_rate = .75, q = 1), score_list)

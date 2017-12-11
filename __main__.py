@@ -32,12 +32,11 @@ pso_params = {"Iris" : [10, 3, 0.7, 1.2, 1.3, 100],
               "Customers" : [10, 8, 0.75, 1.3, 1.3, 100]}
 
 # eta, num_clusters, iterations
-cl_params = { "Iris" : [0.1, 3, 100],
-              "Glass" : [7],
-              "Banknote" : [2],
-              "Seeds" : [3],
-              "Customers" : [5]}
-
+cl_params = { "Iris" : [0.1, 3, 1000],
+              "Glass" : [25, 7, 1000],
+              "Banknote" : [0.0001, 2, 1000],
+              "Seeds" : [20, 3, 1000],
+              "Customers" : [10, 5, 1000]}
 # radius, minpts
 dbscan_params = { "Iris" : [0.6, 4],
                   "Glass" : [0.86, 7],
@@ -104,7 +103,7 @@ class build_GA_Menu(Frame):
         elif self.alg_selection.get() == "PSO":
             Analyze.analyze(data, dataset_name, 10, self.build_pso_function(*pso_params[dataset_name]), score_list)
         elif self.alg_selection.get() == "ACO":
-            Analyze.analyze(data, dataset_name, 10, self.build_aco_func(iterations = 500, num_clusters = 3, num_ants = 10,
+            Analyze.analyze(data, dataset_name, 10, self.build_aco_func(iterations = 1000, num_clusters = 3, num_ants = 10,
                             beta = 0.75, prob_cutoff = 0.75, num_elite_ants = 5, decay_rate = .75, q = 0.25), score_list)
 
     # pass the build function the arguments to the function

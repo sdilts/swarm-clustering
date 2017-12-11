@@ -19,12 +19,12 @@ kMeans_params = { "Iris" : [3],
                   "Seeds" : [3],
                   "Customers" : [5]}
 
-# num clusters, num ants, beta, prob cutoff, num elite, decay rate, q
-aco_params = { "Iris" : [3],
-               "Glass" : [7],
-               "Banknote" : [2],
-               "Seeds" : [3],
-               "Customers" : [5]}
+# max iterations, num clusters, num ants, beta, prob cutoff, num elite, decay rate, q
+aco_params = { "Iris" : [1000, 3, 10, 0.75, 0.75, 5, 0.75, 0.25],
+               "Glass" : [1000, 7, 10, 0.75, 0.75, 5, 0.75, 0.25],
+               "Banknote" : [1000, 2, 10, 0.75, 0.75, 5, 0.75, 0.25],
+               "Seeds" : [1000, 3, 10, 0.75, 0.75, 5, 0.75, 0.25],
+               "Customers" : [1000, 5, 10, .75, 0.75, 5, 0.75, 0.25]}
 
 # num_particles, num centroids, inertia, accel 1, accel 2, max_iter
 pso_params = {"Iris" : [10, 3, 0.7, 1.2, 1.3, 100],
@@ -106,8 +106,7 @@ class build_GA_Menu(Frame):
         elif self.alg_selection.get() == "PSO":
             Analyze.analyze(data, dataset_name, 10, self.build_pso_function(*pso_params[dataset_name]), score_list)
         elif self.alg_selection.get() == "ACO":
-            Analyze.analyze(data, dataset_name, 10, self.build_aco_func(iterations = 1000, num_clusters = 3, num_ants = 10,
-                            beta = 0.75, prob_cutoff = 0.75, num_elite_ants = 5, decay_rate = .75, q = 0.25), score_list)
+            Analyze.analyze(data, dataset_name, 10, self.build_aco_func(*aco_params[dataset_name]), score_list)
 
     # pass the build function the arguments to the algorithm itself
     # The build functions allow us to pass all parameters and function names to the Analyze module which uses the

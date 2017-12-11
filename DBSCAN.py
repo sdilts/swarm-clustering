@@ -3,8 +3,6 @@ import multiprocessing as mp
 import numpy as np
 from collections import deque
 from collections import defaultdict
-import time
-import random
 # import matplotlib.pyplot as plt
 
 '''This module contains the functionality for the DBSCAN clustering algorithm.'''
@@ -78,33 +76,31 @@ def _cluster(data_points, radius, minpts):
 
 
 # Method to determine a reasonable radius to use
+# Matplotlib must be enabled to use this method
 def parameter_selection(k, data_pts):
     k_dist = []
+    # Calculate distance between each pt and every other pt
     for pt in data_pts:
         distances = []
         differences = np.array(pt) - np.array(data_pts)
         for diff in differences:
             dist = np.linalg.norm(diff)
             distances.append(dist)
+
+        # Sort the distances from smallest to largest
         distances.sort()
+
+        # Append the largest distance
         k_dist.append(distances[k-1])
 
+    # Sort the largest distances from smallest to largest
     k_dist.sort()
     x = range(0, len(k_dist))
+
+    # Plot the distances. When there is a sharp turn upward in intra point distances, use the y-value on the graph
+    # at that point as the radius
     plt.scatter(x, k_dist)
     plt.show()
-
-
-# Load data from a local file
-def load_data(file_name):
-    cluster = []
-    with open(file_name, 'r') as file:
-        for line in file:
-            a = line.split(",")
-            pt = (float(a[0]), float(a[1]))
-            cluster.append(pt)
-    print("Number of instances : %s" % len(cluster))
-    return cluster
 
 
 # Run the DBSCAN algorithm and return the final scored results
@@ -117,6 +113,7 @@ def dbscan(data_pts, radius, minpts, score_funcs=None):
     for key, label in labels.items():
         clusters[label].append(key)
 
+    # Calculate cluster sse
     result = [Analyze.analyze_clusters(clusters, score_funcs)]
 
     return result

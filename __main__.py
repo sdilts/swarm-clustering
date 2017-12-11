@@ -8,6 +8,8 @@ import ACO
 import load_data
 from tkinter import *
 
+'''The main module contains the functionality to run the GUI, performing dataset and algorithm selection'''
+
 # Parameters to use for each algorithm and dataset
 
 # Number of centroids
@@ -45,6 +47,7 @@ dbscan_params = { "Iris" : [0.6, 4],
                   "Customers" : [16, 12000]}
 
 
+# Build the GUI
 class build_GA_Menu(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
@@ -106,7 +109,9 @@ class build_GA_Menu(Frame):
             Analyze.analyze(data, dataset_name, 10, self.build_aco_func(iterations = 1000, num_clusters = 3, num_ants = 10,
                             beta = 0.75, prob_cutoff = 0.75, num_elite_ants = 5, decay_rate = .75, q = 0.25), score_list)
 
-    # pass the build function the arguments to the function
+    # pass the build function the arguments to the algorithm itself
+    # The build functions allow us to pass all parameters and function names to the Analyze module which uses the
+    # information to write data to file with descriptions of what parameters and datasets were used
     def build_kMeans_func(self, k):
         # get the arguments:
         params = locals()

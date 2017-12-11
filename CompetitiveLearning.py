@@ -12,16 +12,18 @@ def competitive_learning(data_set, eta, num_clusters, iterations, score_funcs):
         then trains the weights of the network by updating the weights of the
         node with the strongest output for each training example '''
 
+    #Initialize variables
     num_inputs = len(data_set[0])  # Number of inputs is equal to the number of features
     weight_layer = Layer.Layer(num_inputs, num_clusters, eta)
     results = []
 
     for iteration in range(iterations):
 
+        #Train the network, score the resulting clustering, append the score
+        #to the list of scores, and move on to next iteration
         weight_layer = _train_network(data_set, weight_layer, num_clusters)
         clustering = _cluster(data_set, weight_layer)
         result = Analyze.analyze_clusters(clustering, score_funcs)
-        # print("In CL result: %s" % str(result))
         results.append(result)
 
     return results
@@ -33,6 +35,8 @@ def _train_network(data_set, weight_layer, num_clusters):
 
     winners_seen = []
 
+    #For each data point, select the best node, update the weights
+    #of the "winning" node, and keep track of all clusters selected
     for data_point in data_set:
 
         winner_node = _select_cluster(data_point, weight_layer.weights)
@@ -56,7 +60,11 @@ def _select_cluster(data_point, weights):
 
     for i, weight_array in enumerate(weights):
 
+        #Take the dot product of the input vector and the weight vector for
+        #each output node in the network
         temp_score = np.dot(np.array(data_point), weight_array)
+
+        #Track the best cluster seen so far
         if temp_score > best_score:
             best_score = temp_score
             selected_cluster = i
@@ -65,6 +73,8 @@ def _select_cluster(data_point, weights):
 
 
 def _cluster(data_set, weight_layer):
+    ''' Return a clustering solution, based on the weights of the 
+        competitive learning network. '''
 
     clustering = collections.defaultdict(list)
 
@@ -73,28 +83,3 @@ def _cluster(data_set, weight_layer):
         clustering[cluster].append(d)
 
     return clustering
-
-
-if __name__ == '__main__':
-
-    scores = [score_funcs.cluster_sse]
-    #data = [[5.6, 0.15, 4.9], [4.7, 0.12, 5.75], [0.22, 3.1, 0.007], [.35, 4.01, 0.23], [43.5, 6.7, 0.1], [51.2, 7.1, 0.25]]
-
-    file = open("iris.data", "r")
-    data_lines = file.readlines()
-    data = []
-    for line in data_lines:
-
-        data_line = line.split(",")[0:4]
-        if len(data_line) > 2:
-            data.append(data_line)
-
-    for i in range(len(data)):
-        for j in range(len(data[i])):
-            data[i][j] = float(data[i][j])
-
-    c = competitive_learning(data_set=data, eta=0.1, num_clusters=3,
-                             iterations=100, score_funcs=scores)
-
-    for thing in c:
-        print(thing["Cluster SSE"])

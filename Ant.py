@@ -28,19 +28,21 @@ class ant:
 
         memory = []
 
+        #Add the data points back onto the memory list
         for i in range(self.num_data_points):
 
             memory.append(i)
 
-        random.shuffle(memory)
+        random.shuffle(memory) #Randomize the order in which the ant will cluster the data points
         self.memory_list = memory
 
     def update_beliefs(self):
         ''' Select a random data point, cluster it, update weights and centroids. '''
 
-        data_index = self._select_next_object()
-        new_cluster = self._select_cluster(data_index)
+        data_index = self._select_next_object() #Grab the index of the next data point to evaluate
+        new_cluster = self._select_cluster(data_index) #Assign the data point to a cluster
 
+        #Update the weight matrix and recalculate centroids given the newly clustered data point
         new_weight_vector = [0] * self.num_clusters
         new_weight_vector[new_cluster] = 1
         self.weights[data_index] = new_weight_vector
@@ -77,16 +79,18 @@ class ant:
 
         for i in range(data_length):
 
+            #Assign weight of 1 to a random cluster for each data point
             weight_list = [0] * self.num_clusters
             cluster = random.randint(0, self.num_clusters - 1)
 
+            #Keep track of which clusters have been selected
             if cluster not in clusters_chosen:
                 clusters_chosen.append(cluster)
 
             weight_list[cluster] = 1
             weights.append(weight_list)
 
-        #Cannot have any empty clusters, if empty cluster, reinitialize
+        #Cannot have any empty clusters, if empty cluster exists, reinitialize
         for c in range(self.num_clusters):
             if c not in clusters_chosen:
                 weights = self._initialize_weights(data_length)
@@ -164,6 +168,7 @@ class ant:
             heuristic = self._heuristic_value(self.dataset[data_index], self.centroids[i])
             temp_score = pheromone * heuristic
 
+            #Keep track of the best cluster seen so far
             if temp_score > best_score:
                 best_score = temp_score
                 best_cluster = i 

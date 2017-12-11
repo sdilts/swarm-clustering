@@ -25,20 +25,19 @@ def pso(num_particles, k, w, c1, c2, max_iter, data, score_funcs=None):
             global_best = cur_particle.position
             global_fitness = particle_fitness
 
+        # Track the global best fitness at each iteration
         g_fit.append(global_fitness)
 
     # Run particle swarm
     for i in range(max_iter):
-        # print("iteration: %s" % i)
-
-        # Update global fitness if a particle in the swarm as a local fitness that is better
+        # Update global fitness if a particle in the swarm has a local fitness that is better
         for particle in swarm:
             if particle.fitness_val < global_fitness:
                 global_best = particle.position
                 global_fitness = particle.fitness_val
         g_fit.append(global_fitness)
 
-        # Update the positions and velocities of the particle
+        # Update the position and velocity of the particle
         for particle in swarm:
             particle.update_particle(global_best, data)
 

@@ -14,7 +14,7 @@ class Particle:
         self.w = w                          # Inertia coefficient
         self.k = k                          # Number of centroids
         self.position = []                  # A particle position is a list of centroid vectors
-        self.velocity = []                  # Initialize velocity vector to 0
+        self.velocity = []                  # Initialize velocity vector
         self.fitness_val = sys.maxsize      # Track current fitness of the particle
 
         # Initialize clusters by assigning random data pts from the data
@@ -31,8 +31,10 @@ class Particle:
 
     # Method to update particle position, velocity, and personal best
     def update_particle(self, global_best, data):
+        # Save previous fitness
         personal_best_fitness = self.fitness(data)
 
+        # Update velocity and position
         self.update_velocity(global_best)
         self.update_position()
 
@@ -94,6 +96,7 @@ class Particle:
 
         return total
 
+    # Method to calculate euclidean distance between two vectors
     @staticmethod
     def distance(vec1, vec2):
         diff = vec1 - vec2
